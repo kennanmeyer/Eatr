@@ -153,7 +153,6 @@ public class NNTest {
 		in_enemy_energy.setInput(1);
 		in_enemy_mouth.setInput(1);
 
-		System.out.println(neural_net.run());
 		neural_net.randomize_weights();
 			for(int i=0;i<100;i++){
 					neural_net.mutate();

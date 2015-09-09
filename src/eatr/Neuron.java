@@ -32,7 +32,6 @@ public class Neuron {
 		double output = 0;
 		for(Synapse s : inLinks) {
 			output += s.getInput()*s.getWeight();
-			//sy
 		}
 		output = 2*activate(output-getThreshold())-1;
 		for(Synapse s : outLinks) {
