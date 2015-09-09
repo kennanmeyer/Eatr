@@ -9,12 +9,15 @@ public class Neuron {
 	private double output;
 	private int type;
 	private int functionType;
-	public ArrayList<Synapse> inLinks;
-	public ArrayList<Synapse> outLinks;
+	public ArrayList<Synapse> inLinks = new ArrayList<Synapse>();
+	public ArrayList<Synapse> outLinks = new ArrayList<Synapse>();
 	
 	public Neuron() {
-		inLinks = new ArrayList<Synapse>();
-		outLinks = new ArrayList<Synapse>();
+
+	}
+	
+	public Neuron(double t) {
+		threshold = t;
 	}
 	
 	public void addInLink(Synapse s) {
@@ -26,7 +29,7 @@ public class Neuron {
 	}
 	
 	public double run(){
-		float output = 0;
+		double output = 0;
 		for(Synapse s : inLinks) {
 			output += s.getInput()*s.getWeight();
 		}
@@ -37,7 +40,7 @@ public class Neuron {
 		return output;
 	}
 	
-	public float activate(float sum){
-	     return (float) (1 / (1 + Math.exp(-sum)));
+	public double activate(double output2){
+	     return (double) 2.0*((1 / (1 + Math.exp(-output2))-.5));
 	}
 }
