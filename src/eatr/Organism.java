@@ -5,8 +5,8 @@ public class Organism {
 	private final int ORGANISM_SIZE=20;
 	private final int FOOD_SIZE=20;
 
-	public NeuralNet createRandomBrain() {
-		return null;
+	public void createRandomBrain() {
+
 	}
 	
     public void move_vector() {
