@@ -7,14 +7,23 @@ public class Synapse {
 	private double weight;
 	public Neuron source;
 	public Neuron target;
-	
+
 	public Synapse(Neuron source, Neuron target) {
-		this.source = source;
-		this.target = target;
-		Random rand = new Random();
-		weight = rand.nextDouble();
+		setSource(source);
+		setTarget(target);
 		source.addOutLink(this);
 		target.addInLink(this);
+	}
+	
+	public Synapse(Neuron source, Neuron target, int w) {
+		if(source != null) {
+			setSource(source);
+			source.addOutLink(this);
+
+		}
+		setTarget(target);
+		target.addInLink(this);
+		setWeight(w);
 	}
 	
 	public double getInput() {
@@ -40,5 +49,9 @@ public class Synapse {
 	}
 	public void setTarget(Neuron target) {
 		this.target = target;
+	}
+	public void remove() {
+		source.removeOutLink(this);
+		target.removeInLink(this);
 	}
 }

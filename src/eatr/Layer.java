@@ -15,8 +15,9 @@ public class Layer {
 	public void InsertNeuron(Neuron N){
 		
 	}
-	public void deleteNeuron(int pos){
-		
+	public void deleteNeuron(Neuron n){
+		n.remove();
+		neurons.remove(n);
 	}
 	public Neuron copyNeuron(int old){
 		return null;
