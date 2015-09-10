@@ -2,17 +2,46 @@ package eatr;
 
 public class Food {
 	private final int ENERGY_VALUE = 50;
-	private final int FOOD_SIZE=20;
+	private final int SIZE=20;
+	private double x;
+	private double y;
+	private boolean eaten = false;
 	
-	public Food() {
-		
+	public Food(int x, int y) {
+		setX(x);
+		setY(y);
+	}
+	
+	public double getX() {
+		return x;
+	}
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public void setY(double y) {
+		this.y = y;
 	}
 
 	public int getENERGY_VALUE() {
 		return ENERGY_VALUE;
 	}
 
-	public int getFOOD_SIZE() {
-		return FOOD_SIZE;
+	public int getSIZE() {
+		return SIZE;
+	}
+
+	public double eat() {
+		eaten = true;
+		return ENERGY_VALUE;
+	}
+
+	public boolean isEaten() {
+		return eaten;
 	}
 }

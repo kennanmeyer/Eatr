@@ -3,7 +3,7 @@ package eatr;
 public class Main {
 	final static int HEIGHT = 800;
 	final static int WIDTH = 800;
-	final static int MAX_EPOCHS = 10000;
+	final static int MAX_EPOCHS =50;
 	
 	
 	public static void main(String args[]) {
@@ -11,6 +11,7 @@ public class Main {
 		
 		for(int e=0; e<MAX_EPOCHS; e++) {
 			env.update();
+			env.draw();
 		}	
 	}
 }

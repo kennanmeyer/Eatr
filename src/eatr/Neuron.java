@@ -20,6 +20,10 @@ public class Neuron {
 		threshold = t;
 	}
 	
+	public double activate(double output2){
+	     return 1 / (1 + Math.exp(-output2));
+	}
+	
 	public void addInLink(Synapse s) {
 		inLinks.add(s);
 	}
@@ -28,36 +32,8 @@ public class Neuron {
 		outLinks.add(s);
 	}
 	
-	public double run(){
-		double output = 0;
-		for(Synapse s : inLinks) {
-			output += s.getInput()*s.getWeight();
-		}
-		output = 2*activate(output-getThreshold())-1;
-		for(Synapse s : outLinks) {
-			s.setInput(output);
-		}
-		return output;
-	}
-	
 	public double getThreshold() {
 		return threshold;
-	}
-
-	public void setThreshold(double threshold) {
-		this.threshold = threshold;
-	}
-
-	public double activate(double output2){
-	     return (double) (1 / (1 + Math.exp(-output2)));
-	}
-
-	public void removeOutLink(Synapse s) {
-		outLinks.remove(s);
-	}
-
-	public void removeInLink(Synapse s) {
-		inLinks.remove(s);
 	}
 
 	public void remove() {
@@ -69,5 +45,29 @@ public class Neuron {
 			s.target.removeOutLink(s);
 		}
 		outLinks.clear();
+	}
+
+	public void removeInLink(Synapse s) {
+		inLinks.remove(s);
+	}
+
+	public void removeOutLink(Synapse s) {
+		outLinks.remove(s);
+	}
+
+	public double run(){
+		double output = 0;
+		for(Synapse s : inLinks) {
+			output += s.getInput()*s.getWeight();
+		}
+		output = 2*activate(output-getThreshold())-1;
+		for(Synapse s : outLinks) {
+			s.setInput(output);
+		}
+		return output;
+	}
+
+	public void setThreshold(double threshold) {
+		this.threshold = threshold;
 	}
 }

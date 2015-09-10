@@ -1,7 +1,5 @@
 package eatr;
 
-import java.util.Random;
-
 public class Synapse {
 	private double input;
 	private double weight;
@@ -29,29 +27,29 @@ public class Synapse {
 	public double getInput() {
 		return input;
 	}
-	public void setInput(double input) {
-		this.input = input;
-	}
-	public double getWeight() {
-		return weight;
-	}
-	public void setWeight(double weight) {
-		this.weight = weight;
-	}
 	public Neuron getSource() {
 		return source;
-	}
-	public void setSource(Neuron source) {
-		this.source = source;
 	}
 	public Neuron getTarget() {
 		return target;
 	}
-	public void setTarget(Neuron target) {
-		this.target = target;
+	public double getWeight() {
+		return weight;
 	}
 	public void remove() {
 		source.removeOutLink(this);
 		target.removeInLink(this);
+	}
+	public void setInput(double input) {
+		this.input = input;
+	}
+	public void setSource(Neuron source) {
+		this.source = source;
+	}
+	public void setTarget(Neuron target) {
+		this.target = target;
+	}
+	public void setWeight(double weight) {
+		this.weight = weight;
 	}
 }
