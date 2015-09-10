@@ -15,13 +15,25 @@ public class Organism {
 	private final int SIZE=20;
 
 	public Organism() {
-		this.age = 0;
+		setAge(0);
+		setEnergy(50);
 	}
 
 	public Organism(int x, int y) {
+		setAge(0);
+		setEnergy(50);
 		setX(x);
 		setY(y);
-		setEnergy(50);
+	}
+	
+	public void update(ArrayList<Organism> organism_list, ArrayList<Food> food_list, int x, int y) {
+		//      moveCreatures(creaturelist, foodlist,x,y)
+//		Vector v = this.think(organism_list,food_list,x,y);
+//		this.move(v,(double)x,(double)y);
+		//      reduce creatureEnergy
+		setEnergy(getEnergy()-3.0);
+		//      creatures eat
+		eat(food_list);
 	}
 
 	public void eat(ArrayList<Food> food){
@@ -46,34 +58,6 @@ public class Organism {
 	            setEnergy(getEnergy()+c.eat());
 			}
 		}
-	}
-
-	public int getAge() {
-		return age;
-	}
-
-	public Network getBrain() {
-		return brain;
-	}
-
-	public double getEnergy() {
-		return energy;
-	}
-
-	public int getGeneration() {
-		return generation;
-	}
-
-	public int getSIZE() {
-		return SIZE;
-	}
-
-	public double getX() {
-		return x;
-	}
-
-	public double getY() {
-		return y;
 	}
 
 	public void move(Vector v, double width, double height) {
@@ -118,6 +102,58 @@ public class Organism {
 		}
 	}
 
+	public Vector think(ArrayList<Organism> o, ArrayList<Food> f, int x, int y) {
+//		create self vector
+//		find closest food
+//		if food exists
+//			create vector
+//		
+//		find closest creature
+//		if creatures exist
+//			make vector to enemy
+//			stimulate input to enemy vectors and energy
+//		 stimulate input for:
+//			food vectors
+//			self vectors
+//			self energy
+//		return outputs
+		
+		return null;	
+	}
+
+	public Organism createChild() {
+		Organism child = new Organism();
+		
+		child.setBrain(this.getBrain());
+		child.setX(this.getX());
+		child.setY(this.getY());
+		child.setEnergy(50);
+		child.setAge(0);
+		child.setGeneration(this.getGeneration() + 1);
+		//child.setPosition(random(getX()-1), random(getY()-1));
+		child.getBrain().mutate();
+		
+		this.setEnergy(this.getEnergy() - 20);
+
+		return child;
+	}
+
+	//Status Checkers
+	public boolean isDead() {
+		if(this.getEnergy() <= 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean canReproduce() {
+		if(this.getEnergy() > 100) {
+			return true;
+		}
+		return false;
+	}
+	
+	//Getters and Setters
 	public void setAge(int age) {
 		this.age = age;
 	}
@@ -146,41 +182,32 @@ public class Organism {
 	public void setY(double d) {
 		this.y = d;
 	}
-
-	public Vector think(ArrayList<Organism> o, ArrayList<Food> f, int x, int y) {
-//		create self vector
-//		find closest food
-//		if food exists
-//			create vector
-//		
-//		find closest creature
-//		if creatures exist
-//			make vector to enemy
-//			stimulate input to enemy vectors and energy
-//		 stimulate input for:
-//			food vectors
-//			self vectors
-//			self energy
-//		return outputs
-		
-		return null;	
+	
+	public int getAge() {
+		return age;
 	}
 
-	public void update(ArrayList<Organism> organism_list, ArrayList<Food> food_list, int i, int j) {
-		//      moveCreatures(creaturelist, foodlist,x,y)
-		
-		//      reduce creatureEnergy
-		setEnergy(getEnergy()-3.0);
-		//      creatures eat
-		eat(food_list);
-		//      procraete
-
+	public Network getBrain() {
+		return brain;
 	}
 
-	public boolean isDead() {
-		if(this.getEnergy() <= 0) {
-			return true;
-		}
-		return false;
+	public double getEnergy() {
+		return energy;
+	}
+
+	public int getGeneration() {
+		return generation;
+	}
+
+	public int getSIZE() {
+		return SIZE;
+	}
+
+	public double getX() {
+		return x;
+	}
+
+	public double getY() {
+		return y;
 	}
 }

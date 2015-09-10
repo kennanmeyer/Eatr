@@ -34,23 +34,7 @@ public class Environment {
 			o.setAge(o.getAge()+i);
 		}
 	}
-	
-	public Organism createChild(Organism parent) {
-		Organism child = new Organism();
-		
-		child.setBrain(parent.getBrain());
-		child.setX(parent.getX());
-		child.setY(parent.getY());
-		parent.setEnergy(parent.getEnergy() - 20);
-		child.setEnergy(50);
-		child.setAge(0);
-		child.setGeneration(parent.getGeneration() + 1);
-		//child.setPosition(random(getX()-1), random(getY()-1));
-		child.getBrain().mutate();
-		
-		return child;
-	}
-	    
+		    
 	public Network createRandomBrain() {
 		Network n = new Network();
 		return n;
@@ -68,37 +52,11 @@ public class Environment {
 		return o;
 	}
 	
-	public void draw() {
-		//draw background
-		//draw food
-		//draw organism
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
 	public void moveOrganisms() {
 		for(Organism o : organism_list) {
 			Vector v = o.think(organism_list,food_list,getX(),getY());
 			o.move(v,(double)getX(),(double)getY());
 		}
-	}
-
-	private Food getNearestFood() {
-		
-		return null;
-	}
-	public void setX(int x) {
-		this.x = x;
-	}
-	
-	public void setY(int y) {
-		this.y = y;
 	}
 	
 	public void update() {
@@ -106,9 +64,7 @@ public class Environment {
         if (energy_reduction_count > AGING_RATE)
         {
             ageOrganisms(1);
-
             energy_reduction_count = 0;
-
             populate();
         }
 //        System.out.println(organism_list.size() +","+ food_list.size());
@@ -119,8 +75,10 @@ public class Environment {
         for(Iterator<Organism> i = organism_list.iterator(); i.hasNext();) {
         	Organism o = i.next();
         	o.update(organism_list, food_list, getX(), getY());
+//        	if(o.canReproduce()) {
+//        		organism_list.add(o.createChild());
+//        	}
             if (o.isDead()) {
-                // Remove the current element from the iterator and the list.
                 i.remove();
                 System.out.println("A Creature has died");
             }
@@ -129,12 +87,9 @@ public class Environment {
             	if(f.isEaten()) {
             		j.remove();
                     System.out.println("Food has been eaten");
-
             	}
             }
         }
-
-
 	}
 
 	public void populate() {
@@ -157,5 +112,33 @@ public class Environment {
 	    Random rand = new Random();
 	    int randomNum = rand.nextInt((max - min) + 1) + min;
 	    return randomNum;
+	}
+	
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+	
+	public ArrayList<Organism> getOrganisms() {
+		return organism_list;
+	}
+
+	public ArrayList<Food> getFood() {
+		return food_list;
+	}
+
+	private Food getNearestFood() {
+		
+		return null;
+	}
+	public void setX(int x) {
+		this.x = x;
+	}
+	
+	public void setY(int y) {
+		this.y = y;
 	}
 }
