@@ -83,7 +83,7 @@ public class Environment {
 		child.setAge(0);
 		child.setGeneration(parent.getGeneration() + 1);
 		//child.setPosition(random(getX()-1), random(getY()-1));
-		child.setBrain(child.getBrain().mutate_neural_net(child.getBrain(), MUTATION_RATE));
+		child.getBrain().mutate();
 		
 		return child;
 	}
@@ -114,7 +114,7 @@ public class Environment {
 		this.y = y;
 	}
 	
-	public NeuralNet createRandomBrain() {
+	public Network createRandomBrain() {
 		return null;
 	}
 	

@@ -5,7 +5,7 @@ public class Organism {
 	private int age;
 	private int energy;
 	private int generation;
-	private NeuralNet brain;
+	private Network brain;
 	private int x;
 	private int y;
 	
@@ -56,11 +56,11 @@ public class Organism {
 		this.generation = generation;
 	}
 
-	public NeuralNet getBrain() {
+	public Network getBrain() {
 		return brain;
 	}
 
-	public void setBrain(NeuralNet brain) {
+	public void setBrain(Network brain) {
 		this.brain = brain;
 	}
 	
