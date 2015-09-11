@@ -11,7 +11,7 @@ public class NNTest {
 		Neuron enemy_x = new Neuron();
 		Neuron enemy_y = new Neuron();
 		Neuron enemy_energy = new Neuron();
-		Neuron enemy_mouth = new Neuron();
+		//Neuron enemy_mouth = new Neuron();
 		Neuron m1 = new Neuron(1);
 		Neuron m2 = new Neuron(1);
 		Neuron m3 = new Neuron(1);
@@ -21,7 +21,7 @@ public class NNTest {
 		Neuron k3 = new Neuron(1);
 		Neuron out_x = new Neuron();
 		Neuron out_y = new Neuron();
-		Neuron out_mouth = new Neuron();
+//		Neuron out_mouth = new Neuron();
 
 		//Synapses
 		//inputs
@@ -33,7 +33,7 @@ public class NNTest {
 		Synapse in_enemy_x = new Synapse(null,enemy_x,1);
 		Synapse in_enemy_y = new Synapse(null,enemy_y,1);
 		Synapse in_enemy_energy = new Synapse(null,enemy_energy,1);
-		Synapse in_enemy_mouth = new Synapse(null,enemy_mouth,1);
+		//Synapse in_enemy_mouth = new Synapse(null,enemy_mouth,1);
 
 		new Synapse(food_x, m1);
 		new Synapse(food_x, m2);
@@ -75,10 +75,10 @@ public class NNTest {
 		new Synapse(enemy_energy, m3);
 		new Synapse(enemy_energy, m4);
 
-		new Synapse(enemy_mouth, m1);
-		new Synapse(enemy_mouth, m2);
-		new Synapse(enemy_mouth, m3);
-		new Synapse(enemy_mouth, m4);
+//		new Synapse(enemy_mouth, m1);
+//		new Synapse(enemy_mouth, m2);
+//		new Synapse(enemy_mouth, m3);
+//		new Synapse(enemy_mouth, m4);
 
 		//Layer 3
 		new Synapse(m1, k1);
@@ -105,9 +105,9 @@ public class NNTest {
 		new Synapse(k2, out_y);
 		new Synapse(k3, out_y);
 
-		new Synapse(k1, out_mouth);
-		new Synapse(k2, out_mouth);
-		new Synapse(k3, out_mouth);
+//		new Synapse(k1, out_mouth);
+//		new Synapse(k2, out_mouth);
+//		new Synapse(k3, out_mouth);
 
 		//Make Layers
 		Layer layer1 = new Layer();
@@ -119,7 +119,7 @@ public class NNTest {
 		layer1.add(enemy_x);
 		layer1.add(enemy_y);
 		layer1.add(enemy_energy);
-		layer1.add(enemy_mouth);
+//		layer1.add(enemy_mouth);
 
 		Layer layer2 = new Layer();
 		layer2.add(m1);
@@ -135,7 +135,7 @@ public class NNTest {
 		Layer layer4 = new Layer();
 		layer4.add(out_x);
 		layer4.add(out_y);
-		layer4.add(out_mouth);
+//		layer4.add(out_mouth);
 
 		Network neural_net = new Network();
 		neural_net.addLayer(layer1);
@@ -151,7 +151,7 @@ public class NNTest {
 		in_enemy_x.setInput(-1);
 		in_enemy_y.setInput(-2);
 		in_enemy_energy.setInput(1);
-		in_enemy_mouth.setInput(1);
+//		in_enemy_mouth.setInput(1);
 
 		neural_net.randomize_weights();
 			for(int i=0;i<100;i++){

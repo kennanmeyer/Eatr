@@ -4,6 +4,11 @@ public class Vector {
 	private double x;
 	private double y;
 	
+	public Vector(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+	
     public Vector normalize() {
 		double size = 1.0f / Math.sqrt(x*x + y*y);
 		x *= size;

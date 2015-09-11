@@ -1,15 +1,19 @@
 package eatr;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Network {
 	final double MUTATION_RATE = 0.05;
 	ArrayList<Layer> layers;
+	Map<String, Synapse> inputs;
 	Random rand = new Random();
 	
 	public Network() {
 		layers = new ArrayList<Layer>();
+		inputs = new HashMap<String, Synapse>();
 	}
 		
 	public void addLayer(Layer l){
@@ -161,5 +165,27 @@ public class Network {
 			out = layers.get(i).run();
 		}
 		return out;
+	}
+
+    public int getSize() {
+    	int size =0;
+    	for(Layer l : layers) {
+    		for(Neuron n : l.neurons) {
+    			size++;
+    		}
+    	}
+    	return size;
+    }
+    
+	public void mapInputs(Map<String, Synapse> in_map) {
+		setInputs(in_map);
+	}
+
+	public Map<String, Synapse> getInputs() {
+		return inputs;
+	}
+
+	public void setInputs(Map<String, Synapse> inputs) {
+		this.inputs = inputs;
 	}
 }

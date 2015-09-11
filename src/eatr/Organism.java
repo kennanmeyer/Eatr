@@ -1,6 +1,7 @@
 package eatr;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Organism {
 	//private final int MAX_AGE=0;
@@ -13,13 +14,16 @@ public class Organism {
 	private final double MIN_MOVE = 0.0;
 	private final double MAX_MOVE = 6.0;
 	private final int SIZE=20;
+	private int fitness;
 
 	public Organism() {
+		setFitness(0);
 		setAge(0);
 		setEnergy(50);
 	}
 
 	public Organism(int x, int y) {
+		setFitness(0);
 		setAge(0);
 		setEnergy(50);
 		setX(x);
@@ -28,10 +32,33 @@ public class Organism {
 	
 	public void update(ArrayList<Organism> organism_list, ArrayList<Food> food_list, int x, int y) {
 		//      moveCreatures(creaturelist, foodlist,x,y)
-//		Vector v = this.think(organism_list,food_list,x,y);
-//		this.move(v,(double)x,(double)y);
+		Vector v = this.think(organism_list,food_list,x,y);
+		this.move(v,(double)x,(double)y);
 		//      reduce creatureEnergy
-		setEnergy(getEnergy()-3.0);
+		
+//		find closest creature
+		Organism enemy = null;
+		double e = Double.MAX_VALUE;
+		for(Organism f : organism_list) {
+			double fx = Math.abs(f.getX()-this.getX());
+			double fy = Math.abs(f.getY()-this.getY());
+			double length = Math.sqrt((fx*fx)+(fy*fy));
+			if(length < e) {
+	            e = length;
+	            enemy = f;
+            }
+		}
+		
+//		if creatures exist
+		if(enemy != null) {
+//			make vector to enemy
+			Vector e_vec = new Vector(enemy.getX()-this.getX(), enemy.getY()-this.getY());
+			if(e_vec.length() < getSIZE()) {
+				setEnergy(getEnergy()-3.0);
+			}
+		}
+		setEnergy(getEnergy()-(getBrain().getSize()*0.00001));
+		
 		//      creatures eat
 		eat(food_list);
 	}
@@ -47,7 +74,6 @@ public class Organism {
 	            d = length;
 	            c = f;
             }
-
 		}
 		
 		if(c != null) {
@@ -56,11 +82,15 @@ public class Organism {
 			double length = Math.sqrt((fx*fx)+(fy*fy));
 			if(length <= ((SIZE/2)+(c.getSIZE()))) {
 	            setEnergy(getEnergy()+c.eat());
+	            setFitness(getFitness()+1);
 			}
 		}
 	}
 
 	public void move(Vector v, double width, double height) {
+		v.setX(v.getX()*MAX_MOVE);
+		v.setY(v.getY()*MAX_MOVE);
+
 		double l = v.length();
 		
 		if(l < MIN_MOVE) {	//check if smaller than min move
@@ -102,36 +132,83 @@ public class Organism {
 		}
 	}
 
-	public Vector think(ArrayList<Organism> o, ArrayList<Food> f, int x, int y) {
+	public Vector think(ArrayList<Organism> organisms, ArrayList<Food> food, int x, int y) {
 //		create self vector
 //		find closest food
+		Food c = null;
+		double d = Double.MAX_VALUE;
+		for(Food f : food) {
+			double fx = Math.abs(f.getX()-this.getX());
+			double fy = Math.abs(f.getY()-this.getY());
+			double length = Math.sqrt((fx*fx)+(fy*fy));
+			if(length < d) {
+	            d = length;
+	            c = f;
+            }
+		}
+		
+		double food_x = this.getX();
+		double food_y = this.getY();
+		
 //		if food exists
+		if(c != null) {
 //			create vector
-//		
+			food_x = c.getX();
+			food_y = c.getY();
+		}
+		
 //		find closest creature
+		Organism enemy = null;
+		double e = Double.MAX_VALUE;
+		for(Organism f : organisms) {
+			double fx = Math.abs(f.getX()-this.getX());
+			double fy = Math.abs(f.getY()-this.getY());
+			double length = Math.sqrt((fx*fx)+(fy*fy));
+			if(length < e) {
+	            e = length;
+	            enemy = f;
+            }
+		}
+		
+		double enemy_x = 0;
+		double enemy_y = 0;
+		double enemy_energy = -1;
+		
 //		if creatures exist
+		if(enemy != null) {
 //			make vector to enemy
-//			stimulate input to enemy vectors and energy
-//		 stimulate input for:
-//			food vectors
-//			self vectors
-//			self energy
+			enemy_x = enemy.getX()-this.getX();
+			enemy_y = enemy.getY()-this.getY();
+		}
+
+		//brain.inputs.get(key);
+		brain.inputs.get("rand").setInput(random(2)-1);
+		brain.inputs.get("food_x").setInput(food_x);
+		brain.inputs.get("food_y").setInput(food_y);
+		brain.inputs.get("self_x").setInput(this.getX());
+		brain.inputs.get("self_y").setInput(this.getY());
+		brain.inputs.get("self_energy").setInput(this.getEnergy());
+		brain.inputs.get("enemy_x").setInput(enemy_x);
+		brain.inputs.get("enemy_y").setInput(enemy_y);
+		brain.inputs.get("enemy_energy").setInput(enemy.getEnergy());
+		ArrayList<Double> out = brain.run();
+		
 //		return outputs
 		
-		return null;	
+		return new Vector(out.get(0),out.get(1));	
 	}
 
 	public Organism createChild() {
 		Organism child = new Organism();
 		
 		child.setBrain(this.getBrain());
-		child.setX(this.getX());
-		child.setY(this.getY());
+//		child.setX(this.getX());
+//		child.setY(this.getY());
 		child.setEnergy(50);
 		child.setAge(0);
 		child.setGeneration(this.getGeneration() + 1);
-		//child.setPosition(random(getX()-1), random(getY()-1));
-		child.getBrain().mutate();
+		//child.setPosition(randomDouble(getX()-1), randomDouble(getY()-1));
+		System.out.println(child.getBrain().mutate());
 		
 		this.setEnergy(this.getEnergy() - 20);
 
@@ -151,6 +228,18 @@ public class Organism {
 			return true;
 		}
 		return false;
+	}
+	
+	public static int random(int max) {
+	    Random rand = new Random();
+	    int randomNum = rand.nextInt((max) + 1);
+	    return randomNum;
+	}
+	
+	public static int random(int min, int max) {
+	    Random rand = new Random();
+	    int randomNum = rand.nextInt((max - min) + 1) + min;
+	    return randomNum;
 	}
 	
 	//Getters and Setters
@@ -209,5 +298,13 @@ public class Organism {
 
 	public double getY() {
 		return y;
+	}
+
+	public int getFitness() {
+		return fitness;
+	}
+
+	public void setFitness(int fitness) {
+		this.fitness = fitness;
 	}
 }
