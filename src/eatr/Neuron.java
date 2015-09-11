@@ -2,13 +2,9 @@ package eatr;
 
 import java.util.ArrayList;
 
-public class Neuron {
-	private int neuronId;
-	private int layerId;
+public class Neuron implements java.io.Serializable {
 	private double threshold =0;
 	private double output;
-	private int type;
-	private int functionType;
 	public ArrayList<Synapse> inLinks = new ArrayList<Synapse>();
 	public ArrayList<Synapse> outLinks = new ArrayList<Synapse>();
 	
@@ -69,5 +65,23 @@ public class Neuron {
 
 	public void setThreshold(double threshold) {
 		this.threshold = threshold;
+	}
+	
+	public void stimulate(double input) {
+		for(Synapse s : outLinks) {
+			s.setInput(output);
+		}
+	}
+	
+	public Neuron copy() {
+		Neuron n = new Neuron(this.threshold);
+		n.output = 0;
+		for( Synapse s : inLinks ){
+			n.inLinks.add(s.copy());
+		}
+		for( Synapse s : outLinks ){
+			n.outLinks.add(s.copy());
+		}
+		return n;		
 	}
 }

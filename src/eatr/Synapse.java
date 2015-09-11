@@ -1,6 +1,6 @@
 package eatr;
 
-public class Synapse {
+public class Synapse implements java.io.Serializable {
 	private double input;
 	private double weight;
 	public Neuron source;
@@ -51,5 +51,10 @@ public class Synapse {
 	}
 	public void setWeight(double weight) {
 		this.weight = weight;
+	}
+
+	public Synapse copy() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

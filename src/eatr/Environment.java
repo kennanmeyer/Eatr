@@ -1,5 +1,9 @@
 package eatr;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,20 +11,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
-public class Environment {
-	final static int ELITISM = 5;
-	final static int POPSIZE = 95 + ELITISM;
+public class Environment implements java.io.Serializable {
+	final static int ELITISM = 1;
+	final static int POPSIZE = 200 + ELITISM;
 	final static double MUTATION_RATE = 0.05;
 	final static double CROSSOVER_RATE = 0.7;
 	final static int FOOD_TOTAL = 100;
 	final static double EXTINCTION_PERCENT = 0.05;
 	final static int AGING_RATE = 10;
 
+	private Network eliteBrain;
+	private int elitefitness =0;
 
 
 	private ArrayList<Organism> organism_list;
 	private ArrayList<Food> food_list;
-	private Map<Integer, Network> elites;
 	private int x;
 	
 	private int y;
@@ -32,7 +37,6 @@ public class Environment {
 		setY(y);
 		organism_list = new ArrayList<Organism>();
 		food_list = new ArrayList<Food>();
-		elites = new HashMap<Integer, Network>();
         while (food_list.size() < FOOD_TOTAL) {
             food_list.add(new Food(random(x-1),random(y-1)));
         }
@@ -68,12 +72,12 @@ public class Environment {
 		o.setAge(0);
 		o.setBrain(getEliteBrain());
 		o.setPosition(random(getX()-1), random(getY()-1));
-		
+		o.getBrain().mutate();
 		return o;
 	}
 
 	public Network getEliteBrain() {
-		return elites.get(random(ELITISM-1));
+		return eliteBrain;
 	}
 	
 	public void moveOrganisms() {
@@ -96,9 +100,11 @@ public class Environment {
 	            while (organism_list.size() < POPSIZE-ELITISM) {
 	                organism_list.add(createRandOrganism());
 	            }
-//	            while (organism_list.size() < POPSIZE) {
-//	                organism_list.add(createEliteOrganism());
-//	            }
+	            while (organism_list.size() < POPSIZE) {
+	                organism_list.add(createEliteOrganism());
+	            }
+	            System.out.println(elitefitness);
+	            elitefitness =0;
             }
         }
 //        System.out.println(organism_list.size() +","+ food_list.size());
@@ -107,35 +113,59 @@ public class Environment {
         	o.update(organism_list, food_list, getX(), getY());
         	if(o.canReproduce()) {
         		for(int j=0;j<2;j++) {
-        			Organism child = o.createChild();
+        			
+        			Organism child = new Organism();
+        			
+        			try {
+						child.setBrain((Network)deepCopy(o.getBrain()));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+//        			child.setX(this.getX());
+//        			child.setY(this.getY());
+        			child.setEnergy(50);
+        			child.setAge(0);
+        			child.setGeneration(o.getGeneration() + 1);
+        			//child.setPosition(randomDouble(getX()-1), randomDouble(getY()-1));
+        			child.getBrain().mutate();
+        			
+        			o.setEnergy(o.getEnergy() - 20);
+
         			child.setPosition(randomDouble(getX()-1), randomDouble(getY()-1));
         			organism_list.add(child);
         		}
-                System.out.println("New Child");
 
         	}
             if (o.isDead()) {
                 organism_list.remove(i);
+                if(o.getFitness() > elitefitness) {
+                	try {
+						eliteBrain = (Network)deepCopy(o.getBrain());
+						elitefitness = o.getFitness();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+                }
                 //checkIfElite(o.getFitness(),o.getBrain());
                 i--;
-                System.out.println("A Creature has died");
             }
             for(Iterator<Food> j = food_list.iterator(); j.hasNext();) {
             	Food f = j.next();
             	if(f.isEaten()) {
             		j.remove();
-                    System.out.println("Food has been eaten");
             	}
             }
         }
 	}
 
-	private void checkIfElite(int fitness, Network brain) {
-		int min = Integer.MIN_VALUE;
+	public int getElitefitness() {
+		return elitefitness;
+	}
 
-		if(fitness > Collections.min(elites.keySet())) {
-			
-		}
+	public void setElitefitness(int elitefitness) {
+		this.elitefitness = elitefitness;
 	}
 
 	public static int random(int max) {
@@ -210,15 +240,15 @@ public class Environment {
 
 		//Synapses
 		//inputs
-		Synapse in_rand = new Synapse(null,rand,1);
-		Synapse in_food_x = new Synapse(null,food_x,1);
-		Synapse in_food_y = new Synapse(null,food_y,1);
-		Synapse in_self_x = new Synapse(null,self_x,1);
-		Synapse in_self_y = new Synapse(null,self_y,1);
-		Synapse in_self_energy = new Synapse(null,self_energy,1);
-		Synapse in_enemy_x = new Synapse(null,enemy_x,1);
-		Synapse in_enemy_y = new Synapse(null,enemy_y,1);
-		Synapse in_enemy_energy = new Synapse(null,enemy_energy,1);
+//		Synapse in_rand = new Synapse(null,rand,1);
+//		Synapse in_food_x = new Synapse(null,food_x,1);
+//		Synapse in_food_y = new Synapse(null,food_y,1);
+//		Synapse in_self_x = new Synapse(null,self_x,1);
+//		Synapse in_self_y = new Synapse(null,self_y,1);
+//		Synapse in_self_energy = new Synapse(null,self_energy,1);
+//		Synapse in_enemy_x = new Synapse(null,enemy_x,1);
+//		Synapse in_enemy_y = new Synapse(null,enemy_y,1);
+//		Synapse in_enemy_energy = new Synapse(null,enemy_energy,1);
 		//Synapse in_enemy_mouth = new Synapse(null,enemy_mouth,1);
 
 		new Synapse(rand, m1);
@@ -334,18 +364,18 @@ public class Environment {
 		neural_net.addLayer(layer3);
 		neural_net.addLayer(layer4);
 
-		Map<String, Synapse> in_map = new HashMap<String,Synapse>();
-		in_map.put("rand",in_rand);
-		in_map.put("food_x",in_food_x);
-		in_map.put("food_y",in_food_y);
-		in_map.put("self_x",in_self_x);
-		in_map.put("self_y",in_self_y);
-		in_map.put("self_energy",in_self_energy);
-		in_map.put("enemy_x",in_enemy_x);
-		in_map.put("enemy_y",in_enemy_y);
-		in_map.put("enemy_energy",in_enemy_energy);
+//		ArrayList<Synapse> in_map = new ArrayList<Synapse>();
+//		in_map.add(in_rand);
+//		in_map.add(in_food_x);
+//		in_map.add(in_food_y);
+//		in_map.add(in_self_x);
+//		in_map.add(in_self_y);
+//		in_map.add(in_self_energy);
+//		in_map.add(in_enemy_x);
+//		in_map.add(in_enemy_y);
+//		in_map.add(in_enemy_energy);
 		
-		neural_net.mapInputs(in_map);
+//		neural_net.mapInputs(in_map);
 		
 //		in_food_x.setInput(1);
 //		in_food_y.setInput(-2);
@@ -360,4 +390,35 @@ public class Environment {
 		neural_net.randomize_weights();
 		return neural_net;
 	}
+	
+	
+	static public Object deepCopy(Object oldObj) throws Exception
+	   {
+	      ObjectOutputStream oos = null;
+	      ObjectInputStream ois = null;
+	      try
+	      {
+	         ByteArrayOutputStream bos = 
+	               new ByteArrayOutputStream(); // A
+	         oos = new ObjectOutputStream(bos); // B
+	         // serialize and pass the object
+	         oos.writeObject(oldObj);   // C
+	         oos.flush();               // D
+	         ByteArrayInputStream bin = 
+	               new ByteArrayInputStream(bos.toByteArray()); // E
+	         ois = new ObjectInputStream(bin);                  // F
+	         // return the new object
+	         return ois.readObject(); // G
+	      }
+	      catch(Exception e)
+	      {
+	         System.out.println("Exception in ObjectCloner = " + e);
+	         throw(e);
+	      }
+	      finally
+	      {
+	         oos.close();
+	         ois.close();
+	      }
+	   }
 }

@@ -14,7 +14,7 @@ public class Main {
 //		for(int e=0; e<MAX_EPOCHS; e++) {
 		while(true) {
 			try {
-			  Thread.sleep(80);
+			  Thread.sleep(10);
 			} catch (InterruptedException ie) {
 			    //Handle exception
 			}

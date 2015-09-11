@@ -5,15 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class Network {
+public class Network implements java.io.Serializable {
 	final double MUTATION_RATE = 0.05;
 	ArrayList<Layer> layers;
-	Map<String, Synapse> inputs;
 	Random rand = new Random();
 	
 	public Network() {
 		layers = new ArrayList<Layer>();
-		inputs = new HashMap<String, Synapse>();
 	}
 		
 	public void addLayer(Layer l){
@@ -161,7 +159,7 @@ public class Network {
 
     public ArrayList<Double> run() {
 		ArrayList<Double> out = null;
-		for (int i = 0; i < layers.size(); i++) {
+		for (int i = 1; i < layers.size(); i++) {
 			out = layers.get(i).run();
 		}
 		return out;
@@ -177,15 +175,9 @@ public class Network {
     	return size;
     }
     
-	public void mapInputs(Map<String, Synapse> in_map) {
-		setInputs(in_map);
-	}
-
-	public Map<String, Synapse> getInputs() {
-		return inputs;
-	}
-
-	public void setInputs(Map<String, Synapse> inputs) {
-		this.inputs = inputs;
-	}
+    public void setInputs(double[] input){
+    	for(int i=0;i<input.length-1;i++) {
+    		layers.get(0).neurons.get(i).stimulate(input[i]);
+    	}
+    }
 }

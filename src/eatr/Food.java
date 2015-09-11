@@ -1,6 +1,6 @@
 package eatr;
 
-public class Food {
+public class Food implements java.io.Serializable {
 	private final int ENERGY_VALUE = 50;
 	private final int SIZE=15;
 	private double x;

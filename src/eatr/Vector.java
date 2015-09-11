@@ -1,6 +1,6 @@
 package eatr;
 
-public class Vector {
+public class Vector implements java.io.Serializable {
 	private double x;
 	private double y;
 	

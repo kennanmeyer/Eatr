@@ -2,7 +2,7 @@ package eatr;
 
 import java.util.ArrayList;
 
-public class Layer {
+public class Layer implements java.io.Serializable {
 	private int layerId;
 	public ArrayList<Neuron> neurons;
 //	boolean isSigmoid = true;

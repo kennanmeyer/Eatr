@@ -3,7 +3,7 @@ package eatr;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Organism {
+public class Organism implements java.io.Serializable {
 	//private final int MAX_AGE=0;
 	private int age;
 	private double energy;
@@ -32,8 +32,8 @@ public class Organism {
 	
 	public void update(ArrayList<Organism> organism_list, ArrayList<Food> food_list, int x, int y) {
 		//      moveCreatures(creaturelist, foodlist,x,y)
-		Vector v = this.think(organism_list,food_list,x,y);
-		this.move(v,(double)x,(double)y);
+		//Vector v = this.think(organism_list,food_list,x,y);
+		this.move(this.think(organism_list,food_list,x,y),(double)x,(double)y);
 		//      reduce creatureEnergy
 		
 //		find closest creature
@@ -53,7 +53,7 @@ public class Organism {
 		if(enemy != null) {
 //			make vector to enemy
 			Vector e_vec = new Vector(enemy.getX()-this.getX(), enemy.getY()-this.getY());
-			if(e_vec.length() < getSIZE()) {
+			if(e_vec.length() < (getSIZE()/2)) {
 				setEnergy(getEnergy()-3.0);
 			}
 		}
@@ -108,27 +108,27 @@ public class Organism {
 //		set move vector as result
 //		set position = current pos + result vector
 //		subtract energy * distance
-		setEnergy(getEnergy()-(l*0.01));
-		setX(this.getX()+v.getX());
-		setY(this.getY()+v.getY());
+		this.setEnergy(getEnergy()-(l*0.01));
+		this.setX(this.getX()+v.getX());
+		this.setY(this.getY()+v.getY());
 		
 //		check if passed boundaries
 //			reset to inside x and y, and 0 and 0
 		if(this.getX() < 0) {
-			setX(0.0);
-			setEnergy(getEnergy()-0.1);
+			this.setX(0.0);
+			this.setEnergy(getEnergy()-0.1);
 		} else 
 		if(this.getX() > width) {
-			setX(width);
-			setEnergy(getEnergy()-0.1);
+			this.setX(width);
+			this.setEnergy(getEnergy()-0.1);
 		} else 
 		if(this.getY() < 0) {
-			setY(0.0);
-			setEnergy(getEnergy()-0.1);
+			this.setY(0.0);
+			this.setEnergy(getEnergy()-0.1);
 		} else 
 		if(this.getY() > height) {
-			setY(height);
-			setEnergy(getEnergy()-0.1);
+			this.setY(height);
+			this.setEnergy(getEnergy()-0.1);
 		}
 	}
 
@@ -182,37 +182,17 @@ public class Organism {
 		}
 
 		//brain.inputs.get(key);
-		brain.inputs.get("rand").setInput(random(2)-1);
-		brain.inputs.get("food_x").setInput(food_x);
-		brain.inputs.get("food_y").setInput(food_y);
-		brain.inputs.get("self_x").setInput(this.getX());
-		brain.inputs.get("self_y").setInput(this.getY());
-		brain.inputs.get("self_energy").setInput(this.getEnergy());
-		brain.inputs.get("enemy_x").setInput(enemy_x);
-		brain.inputs.get("enemy_y").setInput(enemy_y);
-		brain.inputs.get("enemy_energy").setInput(enemy.getEnergy());
-		ArrayList<Double> out = brain.run();
+		double[] in = {
+					(double)random(2)-1,food_x,food_y,this.getX(),this.getY(),
+					this.getEnergy(),enemy_x,enemy_y,enemy_energy
+				};
+		brain.setInputs(in);
+		ArrayList<Double> out = new ArrayList<Double>();
+		out = brain.run();
 		
 //		return outputs
 		
 		return new Vector(out.get(0),out.get(1));	
-	}
-
-	public Organism createChild() {
-		Organism child = new Organism();
-		
-		child.setBrain(this.getBrain());
-//		child.setX(this.getX());
-//		child.setY(this.getY());
-		child.setEnergy(50);
-		child.setAge(0);
-		child.setGeneration(this.getGeneration() + 1);
-		//child.setPosition(randomDouble(getX()-1), randomDouble(getY()-1));
-		System.out.println(child.getBrain().mutate());
-		
-		this.setEnergy(this.getEnergy() - 20);
-
-		return child;
 	}
 
 	//Status Checkers
@@ -307,4 +287,5 @@ public class Organism {
 	public void setFitness(int fitness) {
 		this.fitness = fitness;
 	}
+
 }

@@ -1,16 +1,22 @@
 package eatr;
 
 import javax.swing.JFrame;
+
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
 import java.awt.Color;
 import java.awt.Graphics;
+
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+
 import java.awt.BorderLayout; 
 
-public class Draw extends JPanel{
+public class Draw extends JPanel {
 	private ArrayList<Organism> organism_list;
 	private ArrayList<Food> food_list;
 	
@@ -35,23 +41,22 @@ public class Draw extends JPanel{
 //        int height = getHeight();
     	super.paintComponent(g);
 
-        for(Organism o: organism_list) {
-        	
+        for(Iterator<Organism> j = getOrganism_list().iterator(); j.hasNext();) {
+        	Organism o = j.next();
         	int x = (int) Math.round(o.getX()-(o.getSIZE()/2));
 			int y = (int) Math.round(o.getY()-(o.getSIZE()/2));
 			if(o.getEnergy() > 60) {
 				g.setColor(Color.BLUE);
-			} else if(o.getEnergy() > 40) {
-				g.setColor(Color.BLACK);
 			} else if(o.getEnergy() > 20) {
-				g.setColor(Color.ORANGE);
+				g.setColor(Color.BLACK);
+
 			} else {
 				g.setColor(Color.RED);
 			}
         	g.fillOval(x, y, o.getSIZE(), o.getSIZE());
         }
-
-		for(Food f : food_list) {
+        for(Iterator<Food> j = getFood_list().iterator(); j.hasNext();) {
+        	Food f = j.next();
 			g.setColor(Color.GREEN);
         	int x = (int) Math.round(f.getX()-(f.getSIZE()/2));
 			int y = (int) Math.round(f.getY()-(f.getSIZE()/2));
@@ -59,7 +64,23 @@ public class Draw extends JPanel{
 		}
     }
 
-    public void draw(Environment env) {
+    public ArrayList<Organism> getOrganism_list() {
+		return organism_list;
+	}
+
+	public void setOrganism_list(ArrayList<Organism> organism_list) {
+		this.organism_list = organism_list;
+	}
+
+	public ArrayList<Food> getFood_list() {
+		return food_list;
+	}
+
+	public void setFood_list(ArrayList<Food> food_list) {
+		this.food_list = food_list;
+	}
+
+	public void draw(Environment env) {
     	organism_list = env.getOrganisms();
     	food_list = env.getFood();
     	this.repaint();
