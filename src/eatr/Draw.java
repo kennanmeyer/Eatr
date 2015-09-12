@@ -41,8 +41,10 @@ public class Draw extends JPanel {
 //        int height = getHeight();
     	super.paintComponent(g);
 
-        for(Iterator<Organism> j = getOrganism_list().iterator(); j.hasNext();) {
-        	Organism o = j.next();
+        for(Iterator<Organism> i = getOrganism_list().iterator(); i.hasNext();) {
+
+        	Organism o = i.next();
+  
         	int x = (int) Math.round(o.getX()-(o.getSIZE()/2));
 			int y = (int) Math.round(o.getY()-(o.getSIZE()/2));
 			if(o.getEnergy() > 60) {
@@ -54,6 +56,7 @@ public class Draw extends JPanel {
 				g.setColor(Color.RED);
 			}
         	g.fillOval(x, y, o.getSIZE(), o.getSIZE());
+
         }
         for(Iterator<Food> j = getFood_list().iterator(); j.hasNext();) {
         	Food f = j.next();

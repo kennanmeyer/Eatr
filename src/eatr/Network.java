@@ -151,9 +151,11 @@ public class Network implements java.io.Serializable {
     public void removeRandomSynapse() {
         Neuron n1 = getRandomNeuron();
 
-        if(n1.outLinks.size() > 0){
+        if(n1.outLinks.size() > 1){
         	Synapse s = n1.outLinks.get(rand.nextInt(n1.outLinks.size()-1));
         	s.remove();
+        } else if(n1.outLinks.size() == 1) {
+        	n1.outLinks.get(0).remove();
         }
     }
 

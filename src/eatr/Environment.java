@@ -2,8 +2,12 @@ package eatr;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,16 +16,18 @@ import java.util.Map;
 import java.util.Random;
 
 public class Environment implements java.io.Serializable {
-	final static int ELITISM = 1;
-	final static int POPSIZE = 200 + ELITISM;
-	final static double MUTATION_RATE = 0.05;
+	final static int ELITISM = 5;
+	final static int POPSIZE = 195 + ELITISM;
+	static double MUTATION_RATE = 0.05;
 	final static double CROSSOVER_RATE = 0.7;
-	final static int FOOD_TOTAL = 100;
+	final static int FOOD_TOTAL = 110;
 	final static double EXTINCTION_PERCENT = 0.05;
 	final static int AGING_RATE = 10;
+	final static int POP_MAX = POPSIZE*150;
 
 	private Network eliteBrain;
 	private int elitefitness =0;
+	private int max_generation =0;
 
 
 	private ArrayList<Organism> organism_list;
@@ -70,7 +76,12 @@ public class Environment implements java.io.Serializable {
 		o.setEnergy(50);	
 		o.setGeneration(1);
 		o.setAge(0);
-		o.setBrain(getEliteBrain());
+		try {
+			o.setBrain((Network)deepCopy(getEliteBrain()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		o.setPosition(random(getX()-1), random(getY()-1));
 		o.getBrain().mutate();
 		return o;
@@ -96,14 +107,14 @@ public class Environment implements java.io.Serializable {
             while (food_list.size() < FOOD_TOTAL) {
                 food_list.add(new Food(random(x-1),random(y-1)));
             }
-            if(organism_list.size() < POPSIZE*EXTINCTION_PERCENT) {
+            if(organism_list.size() < 1) {
 	            while (organism_list.size() < POPSIZE-ELITISM) {
 	                organism_list.add(createRandOrganism());
 	            }
 	            while (organism_list.size() < POPSIZE) {
 	                organism_list.add(createEliteOrganism());
 	            }
-	            System.out.println(elitefitness);
+	            //System.out.println(elitefitness);
 	            elitefitness =0;
             }
         }
@@ -111,30 +122,25 @@ public class Environment implements java.io.Serializable {
         for(int i=0;i<getOrganisms().size();i++) {
         	Organism o = getOrganisms().get(i);
         	o.update(organism_list, food_list, getX(), getY());
-        	if(o.canReproduce()) {
-        		for(int j=0;j<2;j++) {
-        			
-        			Organism child = new Organism();
-        			
-        			try {
-						child.setBrain((Network)deepCopy(o.getBrain()));
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-//        			child.setX(this.getX());
-//        			child.setY(this.getY());
-        			child.setEnergy(50);
-        			child.setAge(0);
-        			child.setGeneration(o.getGeneration() + 1);
-        			//child.setPosition(randomDouble(getX()-1), randomDouble(getY()-1));
-        			child.getBrain().mutate();
-        			
-        			o.setEnergy(o.getEnergy() - 20);
+        	
+			int max_mutations = 0;
+			double max_mutation_rate = MUTATION_RATE;
+			int mutations;
 
-        			child.setPosition(randomDouble(getX()-1), randomDouble(getY()-1));
-        			organism_list.add(child);
+        	if(o.canReproduce() && organism_list.size() < POP_MAX) {
+        		for(int j=0;j<2;j++) {
+        			mutations = createChild(o);
+        			if(mutations > max_mutations)
+        				max_mutations = mutations;
+//        			MUTATION_RATE *= 0.9;
         		}
+        		
+                if(o.getGeneration() > max_generation)
+                {
+                    max_generation = o.getGeneration();
+                    System.out.println("new generation: "+ max_generation +  " max mutation rate: " + max_mutation_rate + " min mutation rate: " + MUTATION_RATE + " max mutations: " + max_mutations + " parent.nodes: " + o.getBrain().getSize());
+                }
+            	
 
         	}
             if (o.isDead()) {
@@ -158,6 +164,35 @@ public class Environment implements java.io.Serializable {
             	}
             }
         }
+	}
+
+	private int createChild(Organism o) {
+		
+		
+		
+		
+		Organism child = new Organism();
+		
+		try {
+			child.setBrain((Network)deepCopy(o.getBrain()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		child.setX(this.getX());
+//		child.setY(this.getY());
+		child.setEnergy(50);
+		child.setAge(0);
+		child.setGeneration(o.getGeneration() + 1);
+		//child.setPosition(randomDouble(getX()-1), randomDouble(getY()-1));
+		int n = child.getBrain().mutate();
+		
+		o.setEnergy(o.getEnergy() - 20);
+
+		child.setPosition(randomDouble(getX()-1), randomDouble(getY()-1));
+		organism_list.add(child);
+
+		return n;
 	}
 
 	public int getElitefitness() {
@@ -391,7 +426,34 @@ public class Environment implements java.io.Serializable {
 		return neural_net;
 	}
 	
+	public void saveOrganisms(){
+		try {
+			FileOutputStream fileOut = new FileOutputStream("orgs.ser");
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(getOrganisms());
+			out.close();
+			fileOut.close();
+		}catch(IOException i) {
+			i.printStackTrace();
+		}
+	}
 	
+	public void loadOrganisms(){
+	    try {
+	        FileInputStream fileIn = new FileInputStream("orgs.ser");
+	        ObjectInputStream in = new ObjectInputStream(fileIn);
+	        setOrganism_list((ArrayList<Organism>)in.readObject());
+	        in.close();
+	      }
+	      catch (Exception e) {
+	          System.out.println(e);
+	      }
+	}
+	
+	public void setOrganism_list(ArrayList<Organism> organism_list) {
+		this.organism_list = organism_list;
+	}
+
 	static public Object deepCopy(Object oldObj) throws Exception
 	   {
 	      ObjectOutputStream oos = null;
