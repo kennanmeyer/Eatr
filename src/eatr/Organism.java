@@ -13,6 +13,7 @@ public class Organism implements java.io.Serializable {
 	private double y;
 	private final double MIN_MOVE = 0.0;
 	private final double MAX_MOVE = 6.0;
+	private final double MOVE_ENERGY = .0075;
 	private final int SIZE=20;
 	private int fitness;
 
@@ -82,7 +83,7 @@ public class Organism implements java.io.Serializable {
 			double length = Math.sqrt((fx*fx)+(fy*fy));
 			if(length <= ((SIZE/2)+(c.getSIZE()))) {
 	            setEnergy(getEnergy()+c.eat());
-	            setFitness(getFitness()+1);
+	            //setFitness(getFitness()+1);
 			}
 		}
 	}
@@ -108,7 +109,7 @@ public class Organism implements java.io.Serializable {
 //		set move vector as result
 //		set position = current pos + result vector
 //		subtract energy * distance
-		this.setEnergy(getEnergy()-(l*0.01));
+		this.setEnergy(this.getEnergy()-(l*MOVE_ENERGY));
 		this.setX(this.getX()+v.getX());
 		this.setY(this.getY()+v.getY());
 		

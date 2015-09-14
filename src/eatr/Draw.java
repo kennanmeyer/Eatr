@@ -29,7 +29,7 @@ public class Draw extends JPanel {
 		JFrame application = new JFrame();
         application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         application.add(this);
-        application.setSize(width, height);
+        application.setSize(width+10, height+10);
         application.setVisible(true);  
 
         setBackground(Color.WHITE);
@@ -56,6 +56,7 @@ public class Draw extends JPanel {
 				g.setColor(Color.RED);
 			}
         	g.fillOval(x, y, o.getSIZE(), o.getSIZE());
+        	g.drawString(Integer.toString(getOrganism_list().size()), 15, 15);
 
         }
         for(Iterator<Food> j = getFood_list().iterator(); j.hasNext();) {

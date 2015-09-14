@@ -2,6 +2,7 @@ package eatr;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,11 +17,11 @@ import java.util.Map;
 import java.util.Random;
 
 public class Environment implements java.io.Serializable {
-	final static int ELITISM = 5;
-	final static int POPSIZE = 195 + ELITISM;
-	static double MUTATION_RATE = 0.05;
+	final static int ELITISM = 15;
+	final static int POPSIZE = 130 + ELITISM;
+	static double MUTATION_RATE = 0.07;
 	final static double CROSSOVER_RATE = 0.7;
-	final static int FOOD_TOTAL = 110;
+	final static int FOOD_TOTAL = 100;
 	final static double EXTINCTION_PERCENT = 0.05;
 	final static int AGING_RATE = 10;
 	final static int POP_MAX = POPSIZE*150;
@@ -28,7 +29,6 @@ public class Environment implements java.io.Serializable {
 	private Network eliteBrain;
 	private int elitefitness =0;
 	private int max_generation =0;
-
 
 	private ArrayList<Organism> organism_list;
 	private ArrayList<Food> food_list;
@@ -83,7 +83,7 @@ public class Environment implements java.io.Serializable {
 			e.printStackTrace();
 		}
 		o.setPosition(random(getX()-1), random(getY()-1));
-		o.getBrain().mutate();
+		//o.getBrain().mutate();
 		return o;
 	}
 
@@ -104,9 +104,7 @@ public class Environment implements java.io.Serializable {
         {
             ageOrganisms(1);
             energy_reduction_count = 0;
-            while (food_list.size() < FOOD_TOTAL) {
-                food_list.add(new Food(random(x-1),random(y-1)));
-            }
+            //Check if extinct
             if(organism_list.size() < 1) {
 	            while (organism_list.size() < POPSIZE-ELITISM) {
 	                organism_list.add(createRandOrganism());
@@ -116,6 +114,10 @@ public class Environment implements java.io.Serializable {
 	            }
 	            //System.out.println(elitefitness);
 	            elitefitness =0;
+	            food_list.clear();
+            }
+            while (food_list.size() < FOOD_TOTAL) {
+                food_list.add(new Food(random(x-1),random(y-1)));
             }
         }
 //        System.out.println(organism_list.size() +","+ food_list.size());
@@ -129,6 +131,7 @@ public class Environment implements java.io.Serializable {
 
         	if(o.canReproduce() && organism_list.size() < POP_MAX) {
         		for(int j=0;j<2;j++) {
+        			o.setFitness(o.getFitness()+1);
         			mutations = createChild(o);
         			if(mutations > max_mutations)
         				max_mutations = mutations;
@@ -248,6 +251,10 @@ public class Environment implements java.io.Serializable {
 	
 	public void setY(int y) {
 		this.y = y;
+	}
+	
+	public int getMax_generation() {
+		return max_generation;
 	}
 	
 	public Network createRandomBrain() {
@@ -426,6 +433,18 @@ public class Environment implements java.io.Serializable {
 		return neural_net;
 	}
 	
+	public void save(){
+		try {
+			FileOutputStream fileOut = new FileOutputStream("env.ser");
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(this);
+			out.close();
+			fileOut.close();
+		}catch(IOException i) {
+			i.printStackTrace();
+		}
+	}
+		
 	public void saveOrganisms(){
 		try {
 			FileOutputStream fileOut = new FileOutputStream("orgs.ser");
@@ -436,18 +455,72 @@ public class Environment implements java.io.Serializable {
 		}catch(IOException i) {
 			i.printStackTrace();
 		}
+		if(eliteBrain != null) {
+			try {
+				
+				FileOutputStream fileOut2 = new FileOutputStream("elite.ser");
+				ObjectOutputStream out2 = new ObjectOutputStream(fileOut2);
+				out2.writeObject(eliteBrain);
+				out2.close();
+				fileOut2.close();
+			}catch(IOException i) {
+				i.printStackTrace();
+			}
+		}
+		if(elitefitness > 0) {
+			try {
+				
+				FileOutputStream fileOut3 = new FileOutputStream("elitecount.ser");
+				ObjectOutputStream out3 = new ObjectOutputStream(fileOut3);
+				out3.writeObject(elitefitness);
+				out3.close();
+				fileOut3.close();
+			}catch(IOException i) {
+				i.printStackTrace();
+			}
+		}
 	}
 	
 	public void loadOrganisms(){
-	    try {
-	        FileInputStream fileIn = new FileInputStream("orgs.ser");
-	        ObjectInputStream in = new ObjectInputStream(fileIn);
-	        setOrganism_list((ArrayList<Organism>)in.readObject());
-	        in.close();
-	      }
-	      catch (Exception e) {
-	          System.out.println(e);
-	      }
+		File f = new File("orgs.ser");
+		if(f.exists() && !f.isDirectory()) {
+			try {
+				FileInputStream fileIn = new FileInputStream("orgs.ser");
+				ObjectInputStream in = new ObjectInputStream(fileIn);
+				setOrganism_list((ArrayList<Organism>)in.readObject());
+				System.out.println("Loaded Organism!");
+
+				in.close();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		File f2 = new File("elite.ser");
+		if(f2.exists() && !f2.isDirectory()) {
+			try {
+				FileInputStream fileIn2 = new FileInputStream("elite.ser");
+				ObjectInputStream in2 = new ObjectInputStream(fileIn2);
+				eliteBrain = ((Network)in2.readObject());
+				System.out.println("Loaded Elite!");
+
+				in2.close();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		File f3 = new File("elitecount.ser");
+		if(f3.exists() && !f3.isDirectory()) {
+			try {
+				FileInputStream fileIn3 = new FileInputStream("elitecount.ser");
+				ObjectInputStream in3 = new ObjectInputStream(fileIn3);
+				elitefitness = ((Integer)in3.readObject());
+				System.out.println("Loaded Elite Count!");
+
+				in3.close();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
 	}
 	
 	public void setOrganism_list(ArrayList<Organism> organism_list) {
