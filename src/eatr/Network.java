@@ -1,8 +1,7 @@
 package eatr;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Random;
 
 public class Network implements java.io.Serializable {
@@ -38,8 +37,7 @@ public class Network implements java.io.Serializable {
 
         //set weight to 0.0 so that it does nothing initially.
         //future generations may utilize it.
-        Synapse s = new Synapse(n1, n2);
-        s.setWeight(0);
+        n1.addEdge(n2);
     }
 	
 	public Layer copyLayer(int old, int created){
@@ -93,11 +91,13 @@ public class Network implements java.io.Serializable {
 		int mutated = 0;
 		for(Layer l : layers) {
 			for(Neuron n : l.neurons) {
-		        if(rand.nextDouble() < MUTATION_RATE) {
-		            double delta = (2.0 * rand.nextDouble()) - 1.0;
-		            n.setThreshold( n.getThreshold() + delta);
-		            mutated++;
-		        }
+				for (Neuron e : n.outLinks.keySet()) {
+			        if(rand.nextDouble() < MUTATION_RATE) {
+			            double delta = (2.0 * rand.nextDouble()) - 1.0;
+			            e.setThreshold( e.getThreshold() + delta);
+			            mutated++;
+			        }
+				}
 			}
 		}
 		return mutated;
@@ -107,10 +107,11 @@ public class Network implements java.io.Serializable {
 		int mutated = 0;
 		for(Layer l : layers) {
 			for(Neuron n : l.neurons) {
-				for(Synapse s : n.outLinks) {
+				for (Neuron e : n.outLinks.keySet()) {
 			        if(rand.nextDouble() < MUTATION_RATE) {
 			            double delta = (2.0 * rand.nextDouble()) - 1.0;
-						s.setWeight(s.getWeight()+delta);
+						//s.setWeight(s.getWeight()+delta);
+					    n.outLinks.put(e, n.outLinks.get(e)+delta);
 			            mutated++;
 			        }
 				}
@@ -122,8 +123,8 @@ public class Network implements java.io.Serializable {
     public void randomize_weights() {
 		for(Layer l : layers) {
 			for(Neuron n : l.neurons) {
-				for(Synapse s : n.outLinks) {
-					s.setWeight((rand.nextDouble()*2.0)-1.0);
+				for (Neuron e : n.outLinks.keySet()) {
+				    n.outLinks.put(e, (rand.nextDouble()*2.0)-1.0);
 				}
 			}
 		}
@@ -132,8 +133,9 @@ public class Network implements java.io.Serializable {
     public void removeRandomNeuron() {
     	if(layers.size() < 3) return;
     	int count = 0;
-    	for(Layer l : layers) {
-    		count += l.neurons.size();
+    	//for(Layer l : layers) {
+        for(int i=1; i<layers.size();i++) {
+    		count += layers.get(i).neurons.size();
     	}
         int index = rand.nextInt(count-1);
     	int incr = 0;
@@ -151,11 +153,17 @@ public class Network implements java.io.Serializable {
     public void removeRandomSynapse() {
         Neuron n1 = getRandomNeuron();
 
-        if(n1.outLinks.size() > 1){
-        	Synapse s = n1.outLinks.get(rand.nextInt(n1.outLinks.size()-1));
-        	s.remove();
-        } else if(n1.outLinks.size() == 1) {
-        	n1.outLinks.get(0).remove();
+        if(n1.outLinks.size() > 0){
+//        	Synapse s = n1.outLinks.get(rand.nextInt(n1.outLinks.size()-1));
+//        	s.remove();
+//        } else if(n1.outLinks.size() == 1) {
+//        	n1.outLinks.get(0).remove();
+        	
+        	List<Neuron> keyList = new ArrayList<Neuron>(n1.outLinks.keySet());
+        	int randomIndex = new Random().nextInt(keyList.size());
+        	Neuron target = keyList.get(randomIndex);    
+        	target.removeInLink(n1);
+        	n1.removeOutLink(target);
         }
     }
 

@@ -16,10 +16,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+import org.w3c.dom.css.ElementCSSInlineStyle;
+
 public class Environment implements java.io.Serializable {
 	final static int ELITISM = 15;
-	final static int POPSIZE = 130 + ELITISM;
-	static double MUTATION_RATE = 0.07;
+	final static int POPSIZE =  ELITISM;
+	static double MUTATION_RATE = 0.05;
 	final static double CROSSOVER_RATE = 0.7;
 	final static int FOOD_TOTAL = 100;
 	final static double EXTINCTION_PERCENT = 0.05;
@@ -112,10 +114,10 @@ public class Environment implements java.io.Serializable {
 	            while (organism_list.size() < POPSIZE) {
 	                organism_list.add(createEliteOrganism());
 	            }
-	            //System.out.println(elitefitness);
-	            elitefitness =0;
+//	            elitefitness =0;
 	            food_list.clear();
             }
+            
             while (food_list.size() < FOOD_TOTAL) {
                 food_list.add(new Food(random(x-1),random(y-1)));
             }
@@ -130,8 +132,9 @@ public class Environment implements java.io.Serializable {
 			int mutations;
 
         	if(o.canReproduce() && organism_list.size() < POP_MAX) {
+    			o.setFitness(o.getFitness()+1);
+
         		for(int j=0;j<2;j++) {
-        			o.setFitness(o.getFitness()+1);
         			mutations = createChild(o);
         			if(mutations > max_mutations)
         				max_mutations = mutations;
@@ -143,8 +146,6 @@ public class Environment implements java.io.Serializable {
                     max_generation = o.getGeneration();
                     System.out.println("new generation: "+ max_generation +  " max mutation rate: " + max_mutation_rate + " min mutation rate: " + MUTATION_RATE + " max mutations: " + max_mutations + " parent.nodes: " + o.getBrain().getSize());
                 }
-            	
-
         	}
             if (o.isDead()) {
                 organism_list.remove(i);
@@ -153,11 +154,9 @@ public class Environment implements java.io.Serializable {
 						eliteBrain = (Network)deepCopy(o.getBrain());
 						elitefitness = o.getFitness();
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
                 }
-                //checkIfElite(o.getFitness(),o.getBrain());
                 i--;
             }
             for(Iterator<Food> j = food_list.iterator(); j.hasNext();) {
@@ -170,14 +169,14 @@ public class Environment implements java.io.Serializable {
 	}
 
 	private int createChild(Organism o) {
-		
-		
-		
-		
 		Organism child = new Organism();
 		
 		try {
+//			Network b = new Network();
+//			b=o.getBrain();
 			child.setBrain((Network)deepCopy(o.getBrain()));
+//			child.setBrain(b);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -241,10 +240,6 @@ public class Environment implements java.io.Serializable {
 		return food_list;
 	}
 
-	private Food getNearestFood() {
-		
-		return null;
-	}
 	public void setX(int x) {
 		this.x = x;
 	}
@@ -259,7 +254,6 @@ public class Environment implements java.io.Serializable {
 	
 	public Network createRandomBrain() {
 		//Neurons
-		Neuron rand = new Neuron();
 		Neuron food_x = new Neuron();
 		Neuron food_y = new Neuron();
 		Neuron self_x = new Neuron();
@@ -268,7 +262,6 @@ public class Environment implements java.io.Serializable {
 		Neuron enemy_x = new Neuron();
 		Neuron enemy_y = new Neuron();
 		Neuron enemy_energy = new Neuron();
-		//Neuron enemy_mouth = new Neuron();
 		Neuron m1 = new Neuron(1);
 		Neuron m2 = new Neuron(1);
 		Neuron m3 = new Neuron(1);
@@ -278,99 +271,73 @@ public class Environment implements java.io.Serializable {
 		Neuron k3 = new Neuron(1);
 		Neuron out_x = new Neuron();
 		Neuron out_y = new Neuron();
-//		Neuron out_mouth = new Neuron();
 
 		//Synapses
-		//inputs
-//		Synapse in_rand = new Synapse(null,rand,1);
-//		Synapse in_food_x = new Synapse(null,food_x,1);
-//		Synapse in_food_y = new Synapse(null,food_y,1);
-//		Synapse in_self_x = new Synapse(null,self_x,1);
-//		Synapse in_self_y = new Synapse(null,self_y,1);
-//		Synapse in_self_energy = new Synapse(null,self_energy,1);
-//		Synapse in_enemy_x = new Synapse(null,enemy_x,1);
-//		Synapse in_enemy_y = new Synapse(null,enemy_y,1);
-//		Synapse in_enemy_energy = new Synapse(null,enemy_energy,1);
-		//Synapse in_enemy_mouth = new Synapse(null,enemy_mouth,1);
+		food_x.addEdge(m1);
+		food_x.addEdge(m2);
+		food_x.addEdge(m3);
+		food_x.addEdge(m4);
 
-		new Synapse(rand, m1);
-		new Synapse(rand, m2);
-		new Synapse(rand, m3);
-		new Synapse(rand, m4);
+		food_y.addEdge(m1);
+		food_y.addEdge(m2);
+		food_y.addEdge(m3);
+		food_y.addEdge(m4);
+
+		self_x.addEdge(m1);
+		self_x.addEdge(m2);
+		self_x.addEdge(m3);
+		self_x.addEdge(m4);
 		
-		new Synapse(food_x, m1);
-		new Synapse(food_x, m2);
-		new Synapse(food_x, m3);
-		new Synapse(food_x, m4);
+		self_y.addEdge(m1);
+		self_y.addEdge(m2);
+		self_y.addEdge(m3);
+		self_y.addEdge(m4);
+		
+		self_energy.addEdge(m1);
+		self_energy.addEdge(m2);
+		self_energy.addEdge(m3);
+		self_energy.addEdge(m4);
 
-		new Synapse(food_y, m1);
-		new Synapse(food_y, m2);
-		new Synapse(food_y, m3);
-		new Synapse(food_y, m4);
-
-		new Synapse(self_x, m1);
-		new Synapse(self_x, m2);
-		new Synapse(self_x, m3);
-		new Synapse(self_x, m4);
-
-		new Synapse(self_y, m1);
-		new Synapse(self_y, m2);
-		new Synapse(self_y, m3);
-		new Synapse(self_y, m4);
-
-		new Synapse(self_energy, m1);
-		new Synapse(self_energy, m2);
-		new Synapse(self_energy, m3);
-		new Synapse(self_energy, m4);
-
-		new Synapse(enemy_x, m1);
-		new Synapse(enemy_x, m2);
-		new Synapse(enemy_x, m3);
-		new Synapse(enemy_x, m4);
-
-		new Synapse(enemy_y, m1);
-		new Synapse(enemy_y, m2);
-		new Synapse(enemy_y, m3);
-		new Synapse(enemy_y, m4);
-
-		new Synapse(enemy_energy, m1);
-		new Synapse(enemy_energy, m2);
-		new Synapse(enemy_energy, m3);
-		new Synapse(enemy_energy, m4);
-
-//		new Synapse(enemy_mouth, m1);
-//		new Synapse(enemy_mouth, m2);
-//		new Synapse(enemy_mouth, m3);
-//		new Synapse(enemy_mouth, m4);
+		enemy_x.addEdge(m1);
+		enemy_x.addEdge(m2);
+		enemy_x.addEdge(m3);
+		enemy_x.addEdge(m4);
+		
+		enemy_y.addEdge(m1);
+		enemy_y.addEdge(m2);
+		enemy_y.addEdge(m3);
+		enemy_y.addEdge(m4);
+		
+		enemy_energy.addEdge(m1);
+		enemy_energy.addEdge(m2);
+		enemy_energy.addEdge(m3);
+		enemy_energy.addEdge(m4);
 
 		//Layer 3
-		new Synapse(m1, k1);
-		new Synapse(m2, k1);
-		new Synapse(m3, k1);
-		new Synapse(m4, k1);
+		m1.addEdge(k1);
+		m2.addEdge(k1);
+		m3.addEdge(k1);
+		m4.addEdge(k1);
+		
+		m1.addEdge(k2);
+		m2.addEdge(k2);
+		m3.addEdge(k2);
+		m4.addEdge(k2);
+		
+		m1.addEdge(k3);
+		m2.addEdge(k3);
+		m3.addEdge(k3);
+		m4.addEdge(k3);
 
-		new Synapse(m1, k2);
-		new Synapse(m2, k2);
-		new Synapse(m3, k2);
-		new Synapse(m4, k2);
-
-		new Synapse(m1, k3);
-		new Synapse(m2, k3);
-		new Synapse(m3, k3);
-		new Synapse(m4, k3);
 
 		//Layer 4
-		new Synapse(k1, out_x);
-		new Synapse(k2, out_x);
-		new Synapse(k3, out_x);
+		k1.addEdge(out_x);
+		k2.addEdge(out_x);
+		k3.addEdge(out_x);
 
-		new Synapse(k1, out_y);
-		new Synapse(k2, out_y);
-		new Synapse(k3, out_y);
-
-//		new Synapse(k1, out_mouth);
-//		new Synapse(k2, out_mouth);
-//		new Synapse(k3, out_mouth);
+		k1.addEdge(out_y);
+		k2.addEdge(out_y);
+		k3.addEdge(out_y);
 
 		//Make Layers
 		Layer layer1 = new Layer();
@@ -382,7 +349,6 @@ public class Environment implements java.io.Serializable {
 		layer1.add(enemy_x);
 		layer1.add(enemy_y);
 		layer1.add(enemy_energy);
-//		layer1.add(enemy_mouth);
 
 		Layer layer2 = new Layer();
 		layer2.add(m1);
@@ -398,36 +364,12 @@ public class Environment implements java.io.Serializable {
 		Layer layer4 = new Layer();
 		layer4.add(out_x);
 		layer4.add(out_y);
-//		layer4.add(out_mouth);
 
 		Network neural_net = new Network();
 		neural_net.addLayer(layer1);
 		neural_net.addLayer(layer2);
 		neural_net.addLayer(layer3);
 		neural_net.addLayer(layer4);
-
-//		ArrayList<Synapse> in_map = new ArrayList<Synapse>();
-//		in_map.add(in_rand);
-//		in_map.add(in_food_x);
-//		in_map.add(in_food_y);
-//		in_map.add(in_self_x);
-//		in_map.add(in_self_y);
-//		in_map.add(in_self_energy);
-//		in_map.add(in_enemy_x);
-//		in_map.add(in_enemy_y);
-//		in_map.add(in_enemy_energy);
-		
-//		neural_net.mapInputs(in_map);
-		
-//		in_food_x.setInput(1);
-//		in_food_y.setInput(-2);
-//		in_self_x.setInput(3);
-//		in_self_y.setInput(4);
-//		in_self_energy.setInput(5);
-//		in_enemy_x.setInput(-1);
-//		in_enemy_y.setInput(-2);
-//		in_enemy_energy.setInput(1);
-//		in_enemy_mouth.setInput(1);
 
 		neural_net.randomize_weights();
 		return neural_net;

@@ -13,7 +13,7 @@ public class Organism implements java.io.Serializable {
 	private double y;
 	private final double MIN_MOVE = 0.0;
 	private final double MAX_MOVE = 6.0;
-	private final double MOVE_ENERGY = .0075;
+	private final double MOVE_ENERGY = .01;
 	private final int SIZE=20;
 	private int fitness;
 
@@ -154,8 +154,8 @@ public class Organism implements java.io.Serializable {
 //		if food exists
 		if(c != null) {
 //			create vector
-			food_x = c.getX();
-			food_y = c.getY();
+			food_x = c.getX()-this.getX();
+			food_y = c.getY()-this.getY();
 		}
 		
 //		find closest creature
@@ -181,11 +181,14 @@ public class Organism implements java.io.Serializable {
 			enemy_x = enemy.getX()-this.getX();
 			enemy_y = enemy.getY()-this.getY();
 		}
+		
+		double self_x = (this.getX()/x)-.5;
+		double self_y = (this.getY()/x)-.5;
 
 		//brain.inputs.get(key);
 		double[] in = {
-					(double)random(2)-1,food_x,food_y,this.getX(),this.getY(),
-					this.getEnergy(),enemy_x,enemy_y,enemy_energy
+					(double)random(2)-1,food_x,food_y,self_x,self_y,
+					((this.getEnergy()/100)-.5),enemy_x,enemy_y,enemy_energy
 				};
 		brain.setInputs(in);
 		ArrayList<Double> out = new ArrayList<Double>();

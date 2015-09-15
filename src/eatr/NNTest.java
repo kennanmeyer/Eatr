@@ -11,7 +11,6 @@ public class NNTest {
 		Neuron enemy_x = new Neuron();
 		Neuron enemy_y = new Neuron();
 		Neuron enemy_energy = new Neuron();
-		//Neuron enemy_mouth = new Neuron();
 		Neuron m1 = new Neuron(1);
 		Neuron m2 = new Neuron(1);
 		Neuron m3 = new Neuron(1);
@@ -21,93 +20,71 @@ public class NNTest {
 		Neuron k3 = new Neuron(1);
 		Neuron out_x = new Neuron();
 		Neuron out_y = new Neuron();
-//		Neuron out_mouth = new Neuron();
 
 		//Synapses
-		//inputs
-		Synapse in_food_x = new Synapse(null,food_x,1);
-		Synapse in_food_y = new Synapse(null,food_y,1);
-		Synapse in_self_x = new Synapse(null,self_x,1);
-		Synapse in_self_y = new Synapse(null,self_y,1);
-		Synapse in_self_energy = new Synapse(null,self_energy,1);
-		Synapse in_enemy_x = new Synapse(null,enemy_x,1);
-		Synapse in_enemy_y = new Synapse(null,enemy_y,1);
-		Synapse in_enemy_energy = new Synapse(null,enemy_energy,1);
-		//Synapse in_enemy_mouth = new Synapse(null,enemy_mouth,1);
+		food_x.addEdge(m1);
+		food_x.addEdge(m2);
+		food_x.addEdge(m3);
+		food_x.addEdge(m4);
 
-		new Synapse(food_x, m1);
-		new Synapse(food_x, m2);
-		new Synapse(food_x, m3);
-		new Synapse(food_x, m4);
+		food_y.addEdge(m1);
+		food_y.addEdge(m2);
+		food_y.addEdge(m3);
+		food_y.addEdge(m4);
 
-		new Synapse(food_y, m1);
-		new Synapse(food_y, m2);
-		new Synapse(food_y, m3);
-		new Synapse(food_y, m4);
+		self_x.addEdge(m1);
+		self_x.addEdge(m2);
+		self_x.addEdge(m3);
+		self_x.addEdge(m4);
+		
+		self_y.addEdge(m1);
+		self_y.addEdge(m2);
+		self_y.addEdge(m3);
+		self_y.addEdge(m4);
+		
+		self_energy.addEdge(m1);
+		self_energy.addEdge(m2);
+		self_energy.addEdge(m3);
+		self_energy.addEdge(m4);
 
-		new Synapse(self_x, m1);
-		new Synapse(self_x, m2);
-		new Synapse(self_x, m3);
-		new Synapse(self_x, m4);
-
-		new Synapse(self_y, m1);
-		new Synapse(self_y, m2);
-		new Synapse(self_y, m3);
-		new Synapse(self_y, m4);
-
-		new Synapse(self_energy, m1);
-		new Synapse(self_energy, m2);
-		new Synapse(self_energy, m3);
-		new Synapse(self_energy, m4);
-
-		new Synapse(enemy_x, m1);
-		new Synapse(enemy_x, m2);
-		new Synapse(enemy_x, m3);
-		new Synapse(enemy_x, m4);
-
-		new Synapse(enemy_y, m1);
-		new Synapse(enemy_y, m2);
-		new Synapse(enemy_y, m3);
-		new Synapse(enemy_y, m4);
-
-		new Synapse(enemy_energy, m1);
-		new Synapse(enemy_energy, m2);
-		new Synapse(enemy_energy, m3);
-		new Synapse(enemy_energy, m4);
-
-//		new Synapse(enemy_mouth, m1);
-//		new Synapse(enemy_mouth, m2);
-//		new Synapse(enemy_mouth, m3);
-//		new Synapse(enemy_mouth, m4);
+		enemy_x.addEdge(m1);
+		enemy_x.addEdge(m2);
+		enemy_x.addEdge(m3);
+		enemy_x.addEdge(m4);
+		
+		enemy_y.addEdge(m1);
+		enemy_y.addEdge(m2);
+		enemy_y.addEdge(m3);
+		enemy_y.addEdge(m4);
+		
+		enemy_energy.addEdge(m1);
+		enemy_energy.addEdge(m2);
+		enemy_energy.addEdge(m3);
+		enemy_energy.addEdge(m4);
 
 		//Layer 3
-		new Synapse(m1, k1);
-		new Synapse(m2, k1);
-		new Synapse(m3, k1);
-		new Synapse(m4, k1);
-
-		new Synapse(m1, k2);
-		new Synapse(m2, k2);
-		new Synapse(m3, k2);
-		new Synapse(m4, k2);
-
-		new Synapse(m1, k3);
-		new Synapse(m2, k3);
-		new Synapse(m3, k3);
-		new Synapse(m4, k3);
+		m1.addEdge(k1);
+		m2.addEdge(k1);
+		m3.addEdge(k1);
+		m4.addEdge(k1);
+		
+		m1.addEdge(k2);
+		m2.addEdge(k2);
+		m3.addEdge(k2);
+		m4.addEdge(k2);
+		
+		m1.addEdge(k3);
+		m2.addEdge(k3);
+		m3.addEdge(k3);
 
 		//Layer 4
-		new Synapse(k1, out_x);
-		new Synapse(k2, out_x);
-		new Synapse(k3, out_x);
+		k1.addEdge(out_x);
+		k2.addEdge(out_x);
+		k3.addEdge(out_x);
 
-		new Synapse(k1, out_y);
-		new Synapse(k2, out_y);
-		new Synapse(k3, out_y);
-
-//		new Synapse(k1, out_mouth);
-//		new Synapse(k2, out_mouth);
-//		new Synapse(k3, out_mouth);
+		k1.addEdge(out_y);
+		k2.addEdge(out_y);
+		k3.addEdge(out_y);
 
 		//Make Layers
 		Layer layer1 = new Layer();
@@ -119,7 +96,6 @@ public class NNTest {
 		layer1.add(enemy_x);
 		layer1.add(enemy_y);
 		layer1.add(enemy_energy);
-//		layer1.add(enemy_mouth);
 
 		Layer layer2 = new Layer();
 		layer2.add(m1);
@@ -135,7 +111,6 @@ public class NNTest {
 		Layer layer4 = new Layer();
 		layer4.add(out_x);
 		layer4.add(out_y);
-//		layer4.add(out_mouth);
 
 		Network neural_net = new Network();
 		neural_net.addLayer(layer1);
@@ -143,21 +118,17 @@ public class NNTest {
 		neural_net.addLayer(layer3);
 		neural_net.addLayer(layer4);
 
-		in_food_x.setInput(1);
-		in_food_y.setInput(-2);
-		in_self_x.setInput(3);
-		in_self_y.setInput(4);
-		in_self_energy.setInput(5);
-		in_enemy_x.setInput(-1);
-		in_enemy_y.setInput(-2);
-		in_enemy_energy.setInput(1);
-//		in_enemy_mouth.setInput(1);
+		double[] in = {
+				.2,2,3,-.3,-.2,
+				21,1,-3,30
+			};
+		neural_net.setInputs(in);
 
 		neural_net.randomize_weights();
 			for(int i=0;i<100;i++){
 					neural_net.mutate();
 					//System.out.println(neural_net.run());
 			}
-			System.out.println(neural_net.run());
+			System.out.println(neural_net.run()+ ","+ neural_net.getSize());
 	}
 }

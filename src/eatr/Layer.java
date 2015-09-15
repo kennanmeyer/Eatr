@@ -18,7 +18,12 @@ public class Layer implements java.io.Serializable {
 		return null;
 	}
 	public void deleteNeuron(Neuron n){
-		n.remove();
+		for (Neuron e : n.inLinks.keySet()) {
+			e.removeOutLink(n);
+		}
+		for (Neuron e : n.outLinks.keySet()) {
+			e.removeInLink(n);
+		}
 		neurons.remove(n);
 	}
 	public Neuron FindNeuron(int pos){
@@ -31,7 +36,7 @@ public class Layer implements java.io.Serializable {
 		
 	}
 	public ArrayList<Double> run() {
-		ArrayList<Double> output = new ArrayList<Double>();;
+		ArrayList<Double> output = new ArrayList<Double>();
 		for(Neuron n : neurons) {
 			output.add(n.run());
 		}

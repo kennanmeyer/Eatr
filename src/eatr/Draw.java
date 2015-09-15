@@ -20,13 +20,17 @@ public class Draw extends JPanel {
 	private ArrayList<Organism> organism_list;
 	private ArrayList<Food> food_list;
 	
+	protected ButtonPanel bPanel;
+    protected JFrame application;
+    protected DrawPanel dPanel;
+	
     public Draw(int width, int height)
     {        
     	super();
     	organism_list = new ArrayList<Organism>();
 		food_list = new ArrayList<Food>();
 
-		JFrame application = new JFrame();
+		application = new JFrame();
         application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         application.add(this);
         application.setSize(width+10, height+10);
