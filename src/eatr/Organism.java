@@ -186,10 +186,13 @@ public class Organism implements java.io.Serializable {
 		double self_y = (this.getY()/x)-.5;
 
 		//brain.inputs.get(key);
+//		double[] in = {
+//					(double)random(2)-1,food_x,food_y,self_x,self_y,
+//					((this.getEnergy()/100)-.5),enemy_x,enemy_y,enemy_energy
+//				};
 		double[] in = {
-					(double)random(2)-1,food_x,food_y,self_x,self_y,
-					((this.getEnergy()/100)-.5),enemy_x,enemy_y,enemy_energy
-				};
+		food_x,food_y,((this.getEnergy()/100)-1)
+	};
 		brain.setInputs(in);
 		ArrayList<Double> out = new ArrayList<Double>();
 		out = brain.run();

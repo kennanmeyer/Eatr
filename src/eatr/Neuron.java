@@ -23,12 +23,12 @@ public class Neuron implements java.io.Serializable {
 	     return 1 / (1 + Math.exp(-output2));
 	}
 	
-	public void addInLink(Neuron n) {
-		inLinks.put(n,0.0);
+	private void addInLink(Neuron n, double weight) {
+		inLinks.put(n,weight);
 	}
-	
-	public void addOutLink(Neuron n) {
-		outLinks.put(n,0.0);
+
+	private void addOutLink(Neuron n, double weight) {
+		outLinks.put(n,weight);
 	}
 	
 	public double getThreshold() {
@@ -119,7 +119,12 @@ public class Neuron implements java.io.Serializable {
 	}
 
 	public void addEdge(Neuron target) {
-        this.addOutLink(target);
-        target.addInLink(this);
+        this.addOutLink(target,0.0);
+        target.addInLink(this,0.0);
+	}
+
+	public void addEdge(Neuron target, double d) {
+        this.addOutLink(target,d);
+        target.addInLink(this,d);	
 	}
 }

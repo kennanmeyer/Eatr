@@ -20,7 +20,7 @@ import org.w3c.dom.css.ElementCSSInlineStyle;
 
 public class Environment implements java.io.Serializable {
 	final static int ELITISM = 15;
-	final static int POPSIZE =  ELITISM;
+	final static int POPSIZE =  200;
 	static double MUTATION_RATE = 0.05;
 	final static double CROSSOVER_RATE = 0.7;
 	final static int FOOD_TOTAL = 100;
@@ -49,8 +49,12 @@ public class Environment implements java.io.Serializable {
             food_list.add(new Food(random(x-1),random(y-1)));
         }
 
-        while (organism_list.size() < POPSIZE) {
+        while (organism_list.size() < POPSIZE-1) {
             organism_list.add(createRandOrganism());
+        }
+        
+        while (organism_list.size() < POPSIZE) {
+            organism_list.add(createGoodOrganism());
         }
 	}
 
@@ -67,6 +71,18 @@ public class Environment implements java.io.Serializable {
 		o.setGeneration(1);
 		o.setAge(0);
 		o.setBrain(createRandomBrain());
+		o.setPosition(random(getX()-1), random(getY()-1));
+		
+		return o;
+	}
+	
+	public Organism createGoodOrganism() {
+		Organism o = new Organism();
+
+		o.setEnergy(50);	
+		o.setGeneration(1);
+		o.setAge(0);
+		o.setBrain(createGoodBrain());
 		o.setPosition(random(getX()-1), random(getY()-1));
 		
 		return o;
@@ -107,15 +123,18 @@ public class Environment implements java.io.Serializable {
             ageOrganisms(1);
             energy_reduction_count = 0;
             //Check if extinct
-            if(organism_list.size() < 1) {
-	            while (organism_list.size() < POPSIZE-ELITISM) {
-	                organism_list.add(createRandOrganism());
-	            }
-	            while (organism_list.size() < POPSIZE) {
-	                organism_list.add(createEliteOrganism());
-	            }
-//	            elitefitness =0;
-	            food_list.clear();
+//            if(organism_list.size() < 1) {
+//	            while (organism_list.size() < POPSIZE-ELITISM) {
+//	                organism_list.add(createRandOrganism());
+//	            }
+//	            while (organism_list.size() < POPSIZE) {
+//	                organism_list.add(createEliteOrganism());
+//	            }
+////	            elitefitness =0;
+//	            food_list.clear();
+//            }
+            while(organism_list.size()<5) {
+            	organism_list.add(createRandOrganism());
             }
             
             while (food_list.size() < FOOD_TOTAL) {
@@ -138,7 +157,7 @@ public class Environment implements java.io.Serializable {
         			mutations = createChild(o);
         			if(mutations > max_mutations)
         				max_mutations = mutations;
-//        			MUTATION_RATE *= 0.9;
+//        			MUTATION_RATE *= 0.98;
         		}
         		
                 if(o.getGeneration() > max_generation)
@@ -191,7 +210,9 @@ public class Environment implements java.io.Serializable {
 		
 		o.setEnergy(o.getEnergy() - 20);
 
-		child.setPosition(randomDouble(getX()-1), randomDouble(getY()-1));
+		//child.setPosition(randomDouble(getX()-1), randomDouble(getY()-1));
+		child.setPosition((int)o.getX()+random(3), (int)o.getY()+random(3));
+
 		organism_list.add(child);
 
 		return n;
@@ -256,122 +277,303 @@ public class Environment implements java.io.Serializable {
 		//Neurons
 		Neuron food_x = new Neuron();
 		Neuron food_y = new Neuron();
-		Neuron self_x = new Neuron();
-		Neuron self_y = new Neuron();
-		Neuron self_energy = new Neuron();
-		Neuron enemy_x = new Neuron();
-		Neuron enemy_y = new Neuron();
-		Neuron enemy_energy = new Neuron();
+
+//		Neuron self_x = new Neuron();
+//		Neuron self_y = new Neuron();
+//		Neuron self_energy = new Neuron();
+//		Neuron enemy_x = new Neuron();
+//		Neuron enemy_y = new Neuron();
+//		Neuron enemy_energy = new Neuron();
 		Neuron m1 = new Neuron(1);
-		Neuron m2 = new Neuron(1);
-		Neuron m3 = new Neuron(1);
-		Neuron m4 = new Neuron(1);
-		Neuron k1 = new Neuron(1);
-		Neuron k2 = new Neuron(1);
-		Neuron k3 = new Neuron(1);
+//		Neuron m2 = new Neuron(1);
+//		Neuron m3 = new Neuron(1);
+//		Neuron m4 = new Neuron(1);
+//		Neuron k1 = new Neuron(1);
+//		Neuron k2 = new Neuron(1);
+//		Neuron k3 = new Neuron(1);
 		Neuron out_x = new Neuron();
 		Neuron out_y = new Neuron();
 
 		//Synapses
+		food_x.addEdge(out_x);
+		food_x.addEdge(out_y);
+
+		food_y.addEdge(out_x);
+		food_y.addEdge(out_y);
+		
 		food_x.addEdge(m1);
-		food_x.addEdge(m2);
-		food_x.addEdge(m3);
-		food_x.addEdge(m4);
-
 		food_y.addEdge(m1);
-		food_y.addEdge(m2);
-		food_y.addEdge(m3);
-		food_y.addEdge(m4);
 
-		self_x.addEdge(m1);
-		self_x.addEdge(m2);
-		self_x.addEdge(m3);
-		self_x.addEdge(m4);
+		m1.addEdge(out_x);
+		m1.addEdge(out_y);
+
+//		self_energy.addEdge(out_x);
+//		self_energy.addEdge(out_y);
 		
-		self_y.addEdge(m1);
-		self_y.addEdge(m2);
-		self_y.addEdge(m3);
-		self_y.addEdge(m4);
 		
-		self_energy.addEdge(m1);
-		self_energy.addEdge(m2);
-		self_energy.addEdge(m3);
-		self_energy.addEdge(m4);
+//		food_x.addEdge(m1);
+//		food_x.addEdge(m2);
+//		food_x.addEdge(m3);
+//		food_x.addEdge(m4);
+//
+//		food_y.addEdge(m1);
+//		food_y.addEdge(m2);
+//		food_y.addEdge(m3);
+//		food_y.addEdge(m4);
+//
+//		self_x.addEdge(m1);
+//		self_x.addEdge(m2);
+//		self_x.addEdge(m3);
+//		self_x.addEdge(m4);
+//		
+//		self_y.addEdge(m1);
+//		self_y.addEdge(m2);
+//		self_y.addEdge(m3);
+//		self_y.addEdge(m4);
+//		
+//		self_energy.addEdge(m1);
+//		self_energy.addEdge(m2);
+//		self_energy.addEdge(m3);
+//		self_energy.addEdge(m4);
+//
+//		enemy_x.addEdge(m1);
+//		enemy_x.addEdge(m2);
+//		enemy_x.addEdge(m3);
+//		enemy_x.addEdge(m4);
+//		
+//		enemy_y.addEdge(m1);
+//		enemy_y.addEdge(m2);
+//		enemy_y.addEdge(m3);
+//		enemy_y.addEdge(m4);
+//		
+//		enemy_energy.addEdge(m1);
+//		enemy_energy.addEdge(m2);
+//		enemy_energy.addEdge(m3);
+//		enemy_energy.addEdge(m4);
+//
+//		//Layer 3
+//		m1.addEdge(k1);
+//		m2.addEdge(k1);
+//		m3.addEdge(k1);
+//		m4.addEdge(k1);
+//		
+//		m1.addEdge(k2);
+//		m2.addEdge(k2);
+//		m3.addEdge(k2);
+//		m4.addEdge(k2);
+//		
+//		m1.addEdge(k3);
+//		m2.addEdge(k3);
+//		m3.addEdge(k3);
+//		m4.addEdge(k3);
+//
+//
+//		//Layer 4
+//		k1.addEdge(out_x);
+//		k2.addEdge(out_x);
+//		k3.addEdge(out_x);
+//
+//		k1.addEdge(out_y);
+//		k2.addEdge(out_y);
+//		k3.addEdge(out_y);
 
-		enemy_x.addEdge(m1);
-		enemy_x.addEdge(m2);
-		enemy_x.addEdge(m3);
-		enemy_x.addEdge(m4);
-		
-		enemy_y.addEdge(m1);
-		enemy_y.addEdge(m2);
-		enemy_y.addEdge(m3);
-		enemy_y.addEdge(m4);
-		
-		enemy_energy.addEdge(m1);
-		enemy_energy.addEdge(m2);
-		enemy_energy.addEdge(m3);
-		enemy_energy.addEdge(m4);
+//		//Make Layers
+//		Layer layer1 = new Layer();
+//		layer1.add(food_x);
+//		layer1.add(food_y);
+//		layer1.add(self_x);
+//		layer1.add(self_y);
+//		layer1.add(self_energy);
+//		layer1.add(enemy_x);
+//		layer1.add(enemy_y);
+//		layer1.add(enemy_energy);
+//
+//		Layer layer2 = new Layer();
+//		layer2.add(m1);
+//		layer2.add(m2);
+//		layer2.add(m3);
+//		layer2.add(m4);
+//
+//		Layer layer3 = new Layer();
+//		layer3.add(k1);
+//		layer3.add(k2);
+//		layer3.add(k3);
+//
+//		Layer layer4 = new Layer();
+//		layer4.add(out_x);
+//		layer4.add(out_y);
 
-		//Layer 3
-		m1.addEdge(k1);
-		m2.addEdge(k1);
-		m3.addEdge(k1);
-		m4.addEdge(k1);
-		
-		m1.addEdge(k2);
-		m2.addEdge(k2);
-		m3.addEdge(k2);
-		m4.addEdge(k2);
-		
-		m1.addEdge(k3);
-		m2.addEdge(k3);
-		m3.addEdge(k3);
-		m4.addEdge(k3);
+//		Network neural_net = new Network();
+//		neural_net.addLayer(layer1);
+//		neural_net.addLayer(layer2);
+//		neural_net.addLayer(layer3);
+//		neural_net.addLayer(layer4);
 
-
-		//Layer 4
-		k1.addEdge(out_x);
-		k2.addEdge(out_x);
-		k3.addEdge(out_x);
-
-		k1.addEdge(out_y);
-		k2.addEdge(out_y);
-		k3.addEdge(out_y);
-
-		//Make Layers
 		Layer layer1 = new Layer();
 		layer1.add(food_x);
 		layer1.add(food_y);
-		layer1.add(self_x);
-		layer1.add(self_y);
-		layer1.add(self_energy);
-		layer1.add(enemy_x);
-		layer1.add(enemy_y);
-		layer1.add(enemy_energy);
-
+		
 		Layer layer2 = new Layer();
 		layer2.add(m1);
-		layer2.add(m2);
-		layer2.add(m3);
-		layer2.add(m4);
-
+		
 		Layer layer3 = new Layer();
-		layer3.add(k1);
-		layer3.add(k2);
-		layer3.add(k3);
-
-		Layer layer4 = new Layer();
-		layer4.add(out_x);
-		layer4.add(out_y);
-
+		layer3.add(out_x);
+		layer3.add(out_y);
+		
 		Network neural_net = new Network();
 		neural_net.addLayer(layer1);
 		neural_net.addLayer(layer2);
 		neural_net.addLayer(layer3);
-		neural_net.addLayer(layer4);
 
+		
 		neural_net.randomize_weights();
+		return neural_net;
+	}
+	
+	public Network createGoodBrain() {
+		//Neurons
+		Neuron food_x = new Neuron();
+		Neuron food_y = new Neuron();
+		Neuron rand_in = new Neuron();
+
+		Neuron m1 = new Neuron(1);
+
+		Neuron out_x = new Neuron();
+		Neuron out_y = new Neuron();
+
+		//Synapses
+		food_x.addEdge(out_x,.1);
+		food_x.addEdge(out_y,0);
+
+		food_y.addEdge(out_x,0);
+		food_y.addEdge(out_y,.1);
+		
+		food_x.addEdge(m1,random(2)-1);
+		food_y.addEdge(m1,random(2)-1);
+
+		m1.addEdge(out_x,random(2)-1);
+		m1.addEdge(out_y,random(2)-1);
+
+//		self_energy.addEdge(out_x);
+//		self_energy.addEdge(out_y);
+		
+		
+//		food_x.addEdge(m1);
+//		food_x.addEdge(m2);
+//		food_x.addEdge(m3);
+//		food_x.addEdge(m4);
+//
+//		food_y.addEdge(m1);
+//		food_y.addEdge(m2);
+//		food_y.addEdge(m3);
+//		food_y.addEdge(m4);
+//
+//		self_x.addEdge(m1);
+//		self_x.addEdge(m2);
+//		self_x.addEdge(m3);
+//		self_x.addEdge(m4);
+//		
+//		self_y.addEdge(m1);
+//		self_y.addEdge(m2);
+//		self_y.addEdge(m3);
+//		self_y.addEdge(m4);
+//		
+//		self_energy.addEdge(m1);
+//		self_energy.addEdge(m2);
+//		self_energy.addEdge(m3);
+//		self_energy.addEdge(m4);
+//
+//		enemy_x.addEdge(m1);
+//		enemy_x.addEdge(m2);
+//		enemy_x.addEdge(m3);
+//		enemy_x.addEdge(m4);
+//		
+//		enemy_y.addEdge(m1);
+//		enemy_y.addEdge(m2);
+//		enemy_y.addEdge(m3);
+//		enemy_y.addEdge(m4);
+//		
+//		enemy_energy.addEdge(m1);
+//		enemy_energy.addEdge(m2);
+//		enemy_energy.addEdge(m3);
+//		enemy_energy.addEdge(m4);
+//
+//		//Layer 3
+//		m1.addEdge(k1);
+//		m2.addEdge(k1);
+//		m3.addEdge(k1);
+//		m4.addEdge(k1);
+//		
+//		m1.addEdge(k2);
+//		m2.addEdge(k2);
+//		m3.addEdge(k2);
+//		m4.addEdge(k2);
+//		
+//		m1.addEdge(k3);
+//		m2.addEdge(k3);
+//		m3.addEdge(k3);
+//		m4.addEdge(k3);
+//
+//
+//		//Layer 4
+//		k1.addEdge(out_x);
+//		k2.addEdge(out_x);
+//		k3.addEdge(out_x);
+//
+//		k1.addEdge(out_y);
+//		k2.addEdge(out_y);
+//		k3.addEdge(out_y);
+
+//		//Make Layers
+//		Layer layer1 = new Layer();
+//		layer1.add(food_x);
+//		layer1.add(food_y);
+//		layer1.add(self_x);
+//		layer1.add(self_y);
+//		layer1.add(self_energy);
+//		layer1.add(enemy_x);
+//		layer1.add(enemy_y);
+//		layer1.add(enemy_energy);
+//
+//		Layer layer2 = new Layer();
+//		layer2.add(m1);
+//		layer2.add(m2);
+//		layer2.add(m3);
+//		layer2.add(m4);
+//
+//		Layer layer3 = new Layer();
+//		layer3.add(k1);
+//		layer3.add(k2);
+//		layer3.add(k3);
+//
+//		Layer layer4 = new Layer();
+//		layer4.add(out_x);
+//		layer4.add(out_y);
+
+//		Network neural_net = new Network();
+//		neural_net.addLayer(layer1);
+//		neural_net.addLayer(layer2);
+//		neural_net.addLayer(layer3);
+//		neural_net.addLayer(layer4);
+
+		Layer layer1 = new Layer();
+		layer1.add(food_x);
+		layer1.add(food_y);
+		
+		Layer layer2 = new Layer();
+		layer2.add(m1);
+		
+		Layer layer3 = new Layer();
+		layer3.add(out_x);
+		layer3.add(out_y);
+		
+		Network neural_net = new Network();
+		neural_net.addLayer(layer1);
+		neural_net.addLayer(layer2);
+		neural_net.addLayer(layer3);
+
+		
+		//neural_net.randomize_weights();
 		return neural_net;
 	}
 	

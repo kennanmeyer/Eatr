@@ -22,7 +22,7 @@ public class Network implements java.io.Serializable {
 	}
 
 	public void addRandomNeuronSynapse() {
-    	if(layers.size() < 3) {
+    	while(layers.size() < 4) {
     		addLayer(new Layer(), 1);
     	}
     	Layer l = layers.get(rand.nextInt(layers.size()-3)+1);
@@ -34,9 +34,6 @@ public class Network implements java.io.Serializable {
 	public void addRandomSynapse() {
     	Neuron n1 = getRandomNeuron();
         Neuron n2 = getRandomNeuron();
-
-        //set weight to 0.0 so that it does nothing initially.
-        //future generations may utilize it.
         n1.addEdge(n2);
     }
 	

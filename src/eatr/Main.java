@@ -17,7 +17,7 @@ public class Main {
 		int epoch = 0;
 		while(true) {
 			try {
-			  Thread.sleep(10);
+			  Thread.sleep(50);
 			} catch (InterruptedException ie) {
 			    //Handle exception
 			}
